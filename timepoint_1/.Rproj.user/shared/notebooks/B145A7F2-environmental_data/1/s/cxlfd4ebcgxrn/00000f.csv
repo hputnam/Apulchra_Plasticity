@@ -1,0 +1,20 @@
+"0","pdf(""output/timepoint1_Temp.pdf"")
+par(mfrow=c(2,1))
+par(mar = c(5,5,2,5))
+with(Temp2, plot(Date.Time, Temp, type=""l"", col=""black"", 
+             ylim=c(26.5,31), ylab =NA, main=""Site 2 Mahana""))
+axis(2, col=""black"",col.axis=""black"")
+mtext(""Temperature °C"",side=2,col=""black"",line=4) 
+par(mar = c(5,5,2,5))
+with(Temp3, plot(Date.Time, Temp, type=""l"", col=""black"", 
+             ylim=c(26.5,31), ylab =NA, main=""Site 3 Hilton""))
+axis(2, col=""black"",col.axis=""black"")
+mtext(""Temperature °C"",side=2,col=""black"",line=4) 
+dev.off()
+"
+"1","null device "
+"1","
+"
+"1","          1 "
+"1","
+"

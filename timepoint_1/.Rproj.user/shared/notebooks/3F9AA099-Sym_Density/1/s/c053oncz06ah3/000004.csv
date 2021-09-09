@@ -1,0 +1,6 @@
+"0","# Surface area data
+sa <- read.csv(""output/1_coral_surface_area.csv"")
+"
+"2","cannot open file 'output/1_coral_surface_area.csv': No such file or directory"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

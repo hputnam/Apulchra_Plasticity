@@ -1,0 +1,4 @@
+  facet_grid(varnames~Species, scales = "free_y")
+]0;~/MyProjects/timeseries/timepoint_1[?1034hHollies-MacBook-Pro-4:timepoint_1 hputnam$   facet_grid(varnames~Species, scales  = "free_y")
+bash: syntax error near unexpected token `varnames~Species,'
+]0;~/MyProjects/timeseries/timepoint_1Hollies-MacBook-Pro-4:timepoint_1 hputnam$ [KHollies-MacBook-Pro-4:timepoint_1 hputnam$ 

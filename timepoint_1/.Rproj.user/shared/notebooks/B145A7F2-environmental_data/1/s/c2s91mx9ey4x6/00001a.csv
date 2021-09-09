@@ -1,0 +1,4 @@
+"0","par(mfrow=c(3,1))"
+"0","par(mar = c(5,5,2,5))"
+"0","with(S1.Data, plot(Date.Time, light, type=""l"", col=""black"", "
+"0","             ylim=c(0,5000), ylab =NA, main=""Site 1 Manava""))"

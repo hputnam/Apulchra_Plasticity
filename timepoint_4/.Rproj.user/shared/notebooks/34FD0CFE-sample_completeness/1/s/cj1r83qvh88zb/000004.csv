@@ -1,0 +1,7 @@
+"0","coral_metadata <- read_csv(""../metadata/coral_metadata.csv"") %>% "
+"0","  pull(colony_id)"
+"0",""
+"0","homog_vols <- read_csv(""data/4_4homogenate_vols/4_4homogenate_vols.csv"") %>% "
+"0","  pull(colony_id)"
+"2","Error: 'data/4_4homogenate_vols/4_4homogenate_vols.csv' does not exist in current working directory ('/Users/hputnam/MyProjects/timeseries/timepoint_4').
+"

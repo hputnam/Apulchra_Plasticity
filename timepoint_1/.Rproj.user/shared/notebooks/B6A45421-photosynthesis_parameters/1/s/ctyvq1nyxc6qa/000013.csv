@@ -1,0 +1,11 @@
+"0","pdf(""output/PI_metrics.pdf"")
+df %>%
+  filter(!.variable %in% c(""sigma"", ""b_theta_Intercept"", NA)) %>%
+  ggplot(aes(x = site, y = .value, color = species)) +
+  facet_grid(.variable~species, scales = ""free_y"") +
+  geom_jitter(width = 0.1) +
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = ""errorbar"", color = ""black"", width = 0.5) +
+  stat_summary(fun.y = mean, geom = ""point"", color = ""black"")   
+"
+"2","`fun.y` is deprecated. Use `fun` instead."

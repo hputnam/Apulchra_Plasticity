@@ -1,0 +1,23 @@
+"0","# Define function for fitting LoLinR regressions to be applied to all intervals for all samples"
+"0","fit_reg <- function(df) {"
+"0","  rankLocReg(xall = as.numeric(df$Time), yall = df$Value, "
+"0","             alpha = 0.2, method = ""pc"", verbose = FALSE)"
+"0","}"
+"0",""
+"0","# Setup for parallel processing"
+"0","future::plan(multiprocess)"
+"1",""
+"0","# Map LoLinR function onto all intervals of each sample's thinned dataset"
+"0",""
+"0","##ERROR HERE: Problem with `mutate()` input `regs`. x invalid 'length.out' argument"
+"0","df <- df %>%"
+"0","  mutate(regs = furrr::future_map(thin_data, function(.) {       # future_map executes function in parallel"
+"0","    group_by(., Light_Value) %>%"
+"0","    do(rankLcRg = fit_reg(.))"
+"0","  }))"
+"1",""
+"2","Error: Problem with `mutate()` input `regs`.
+[31mx[39m invalid 'length.out' argument
+[34mℹ[39m Input `regs` is `furrr::future_map(...)`.
+[90mRun `rlang::last_error()` to see where the error occurred.[39m
+"

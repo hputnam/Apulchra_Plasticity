@@ -1,0 +1,1 @@
+{"frames":[{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"axis(2, col = \"blue\", col.axis = \"blue\")","line_number":0}],"message":"Error in axis(2, col = \"blue\", col.axis = \"blue\") : \n  plot.new has not been called yet\n"}

@@ -1,0 +1,26 @@
+{
+    "id": "1E0428A7",
+    "path": "~/MyProjects/timeseries/timepoint_4/scripts/sample_completeness.Rmd",
+    "project_path": "scripts/sample_completeness.Rmd",
+    "type": "r_markdown",
+    "hash": "3349026281",
+    "contents": "",
+    "dirty": false,
+    "created": 1626707571408.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "last_setup_crc32": "921EDEEFec73482f",
+        "cursorPosition": "105,0",
+        "scrollLine": "98",
+        "working_dir": "project"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1614798091,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1626714857585,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,10 @@
+"0","# Join AFDW data with metadata
+afdw <- left_join(Data, metadata) %>%
+  mutate(dry.bioimass.g.ml = (dry.pan.mass.g.ml - burnt.pan.mass.g.ml),
+         dry.bioimass.g = dry.pan.mass.g.ml * homog_vol_ml,
+         burnt.bioimass.g = burnt.pan.mass.g.ml * homog_vol_ml,
+         AFDW.mg.cm2 = ((dry.bioimass.g-burnt.bioimass.g)*1000) / surface.area.cm2)
+"
+"2","Joining, by = ""colony_id""
+"
+"2","Column `colony_id` joining factor and character vector, coercing into character vector"

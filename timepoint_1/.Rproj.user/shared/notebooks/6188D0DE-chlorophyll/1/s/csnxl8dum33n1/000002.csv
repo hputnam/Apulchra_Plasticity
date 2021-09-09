@@ -1,0 +1,8 @@
+"0","chl_data <- read_csv(""data/1_chlorophyll/1_20200106_Chl"", skip = 24, n_max = 24) %>%"
+"0","    select(-1) %>%"
+"0","    magrittr::set_colnames(c(""row"", 1:12, ""wavelength"")) %>%"
+"0","    fill(row) %>%"
+"0","    gather(""col"", ""absorbance"", -wavelength, -row) %>%"
+"0","    unite(""well"", c(row, col), sep = """")"
+"2","Error: 'data/1_chlorophyll/1_20200106_Chl' does not exist in current working directory ('/Users/hputnam/MyProjects/timeseries/timepoint_1').
+"

@@ -1,0 +1,13 @@
+"0","#load wax data"
+"0","wax.data <- read.csv(""data/4_surface_area/4_surface_area_data.csv"", header=TRUE)"
+"0","wax.data$delta.mass.g <- wax.data$weight2.g-wax.data$weight1.g"
+"0","stnds <- subset(wax.data, Sample==""Standard"")"
+"0","stnds <- stnds[-1,] # the largest data point was an artifact outlier. It was removed, as it had bubbles of air escape the wooden sphere, leaving gaps in the wax"
+"0","#calculate the surface area of the spherical standards from the diameter"
+"0","stnds$rad <- stnds$Diameter/2"
+"0","stnds$surface.area.cm2 <- 4*pi*(stnds$rad)^2"
+"0","# calculate the curve coefficients for slope and intercept to apply as the standard"
+"0","stnd.curve <- lm(surface.area.cm2~delta.mass.g, data=stnds)"
+"2","Error in lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...) : 
+  0 (non-NA) cases
+"

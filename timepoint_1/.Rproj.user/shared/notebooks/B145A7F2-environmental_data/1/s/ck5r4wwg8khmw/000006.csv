@@ -1,0 +1,4 @@
+"0","axis(2, col=""blue"",col.axis=""blue"")"
+"0","mtext(""pH"",side=2,col=""blue"",line=4) "
+"0","par(new = T)"
+"0","with(pH1, plot(Date.Time, Temp,type=""l"", axes=F,col=""black"", xlab=NA, ylab=NA, ylim=c(27,32)))"
