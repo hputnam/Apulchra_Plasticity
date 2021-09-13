@@ -1,7 +1,0 @@
-"0","knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)"
-"0",""
-"0","## install packages if you dont already have them"
-"0","if (!require(""tidyverse"")) install.packages(""tidyverse"")"
-"0",""
-"0","# load packages"
-"0","library(tidyverse)"

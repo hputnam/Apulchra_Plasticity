@@ -1,5 +1,0 @@
-"0","axis(2, col=""black"",col.axis=""black"")"
-"0","mtext(""PAR µmol photons m-2 s-1"",side=2,col=""black"",line=4) "
-"0","par(mar = c(5,5,2,5))"
-"0","with(S3.Data, plot(Date.Time, light, type=""l"", col=""black"", "
-"0","             ylim=c(0,5000), ylab =NA, main=""Site 3 Hilton""))"

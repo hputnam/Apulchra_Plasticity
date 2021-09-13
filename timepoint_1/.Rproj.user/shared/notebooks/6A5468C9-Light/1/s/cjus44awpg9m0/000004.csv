@@ -1,6 +1,0 @@
-"0","#Read in licor data
-Licor.Data <- read.csv(""/data/1_Env_data/Cross_Calibration/20200111/1_20200111_Licor_Light_Calib.csv"", header=FALSE)
-"
-"2","cannot open file '/data/1_Env_data/Cross_Calibration/20200111/1_20200111_Licor_Light_Calib.csv': No such file or directory"
-"2","Error in file(file, ""rt"") : cannot open the connection
-"

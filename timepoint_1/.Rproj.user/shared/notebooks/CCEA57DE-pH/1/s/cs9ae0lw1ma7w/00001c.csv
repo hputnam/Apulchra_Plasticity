@@ -1,5 +1,0 @@
-"0","axis(2, col=""blue"",col.axis=""blue"")
-"
-"2","Error in axis(2, col = ""blue"", col.axis = ""blue"") : 
-  plot.new has not been called yet
-"
