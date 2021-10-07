@@ -1,4 +1,4 @@
-﻿Tube.ID,pan.mass.g,dry.pan.mass.g,burnt.pan.mass.g,Vol.added.ml
+﻿Pan.ID,initial.mass.g,dry.pan.mass.g,burnt.pan.mass.g,vol.added.ml
 1,0.312,0.3897,0.3692,5
 2,0.365,0.4513,0.4305,5
 3,0.302,0.3983,0.3712,5
