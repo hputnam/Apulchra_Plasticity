@@ -5,7 +5,6 @@ date: "2/12/2020"
 output: html_document
 ---
 
-#install packages
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
@@ -21,7 +20,8 @@ library(plotrix)
 
 ```{r }
 #Read in biomass data
-Data <- read.csv("data/1_biomass/1_biomass_data.csv")
+setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity/data/timepoint_0/0_biomass")
+Data <- read.csv("Biomass_Data.csv")
 Data <- na.omit(Data)
 
 # Change POC-42 pan 221 from Sym to Host -- was recorded twice as Sym, assuming pan with m ore mass is host
@@ -29,6 +29,7 @@ Data[Data$Pan.ID == 221, "partner"] <- "Host"
 # Remove pan 73 -- from lab notebook, material was stuck in pipet tip, and result is outlier
 Data[Data$Pan.ID == 73, ] <- NA
   
+#biomass data in Oct 2019 not separated/fractionated. The homogenate was just 5 unless not enough sample (one case which is indicated in Biomass_Data.csv)
 # calculated mass per ml
 #different volumes for sym (4ml) and host (5ml)
 sym <- 5
