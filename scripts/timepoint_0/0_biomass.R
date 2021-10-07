@@ -12,15 +12,7 @@ library(plotrix)
 
 #Load Data__________________________________________
 setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
-Data <- read.csv("data/timepoint_0/0_biomass/Biomass_Data.csv")
-Data <- na.omit(Data)
-
-
-# calculated mass per ml
-#different volumes for sym (4ml) and host (5ml)
-#In timepoint 0 there is no sym fraction calculated so do not need to identify values
-sym <- 5
-host <- 4
+Data <- read.csv("data/timepoint_0/0_biomass/0_biomass_data.csv")
 
 #Load tissue homogenate volume
 homog_vol <- read.csv("data/timepoint_0/0_homogenate_vols/0_homogenate_vols.csv", header=TRUE)
@@ -32,9 +24,28 @@ sa <- read.csv("output/0_surface_area.csv")
 metadata <- read_csv("metadata/coral_metadata.csv") %>% select(1:3)
 
 #colony_id column messed up in naming so go back and name it again
-homog_vol <- homog_vol %>%
-  mutate(colony_id = ï..colony_id)
+#homog_vol <- homog_vol %>%
+#  mutate(colony_id = ?..colony_id)
 
 # Join homogenate volumes and surface area with sample metadata
-metadata <- full_join(metadata, homog_vol) %>%
-  full_join(sa)
+Data <- full_join(Data, homog_vol) %>%
+  full_join(sa) %>% full_join(metadata)
+
+
+Data <- Data%>% filter(species=="Acropora")
+Data <- Data %>%
+  mutate(dry.pan.mass.g.vol.corr = dry.pan.mass.g/vol.added.ml* homog_vol_ml, #
+         burnt.pan.mass.g.vol.corr = burnt.pan.mass.g/vol.added.ml *homog_vol_ml)
+
+
+# Calculate Dry Biomass
+Data <- Data %>%
+  mutate(dry.biomass.g = (dry.pan.mass.g.vol.corr - initial.mass.g),
+         DW.mg.cm2 = ((dry.biomass.g)*1000)/ surface.area.cm2)
+
+
+Data <- Data %>%
+  mutate(burnt.biomass.g = (dry.pan.mass.g.vol.corr - burnt.pan.mass.g.vol.corr ),
+         AFDW.mg.cm2 = ((burnt.biomass.g)*1000)/ surface.area.cm2)
+
+write_csv(Data, "output/0_biomass_output.csv")

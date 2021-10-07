@@ -35,26 +35,12 @@ sym_counts1 <- sym_counts %>%
   summarise(mean_count = mean(count, na.rm = TRUE))
 
 # Join mean counts with sample metadata
-sym_counts2 <- full_join(sym_counts1, metadata)
+sym_counts2 <- full_join(sym_counts1, metadata, by="colony_id")
+sym_counts2 <- sym_counts2%>% filter(species=="Acropora")
 
-# Normalize counts by homogenat volume and surface area
+# Normalize counts by homogenate volume and surface area
 sym_counts3 <- sym_counts2 %>%
   mutate(cells.mL = mean_count * 10000 / Squares.Counted,
          cells = cells.mL * homog_vol_ml,
          cells.cm2 = cells / surface.area.cm2)
 
-# Calculate mean counts for each sample - SO FAR NOT WORKING
-sym_counts4 <- sym_counts3 %>%
-  select(colony_id, Squares.Counted, matches("Count[0-9]")) %>%
-  gather("rep", "count", -colony_id, -Squares.Counted) %>%
-  group_by(colony_id, Squares.Counted) %>%
-  summarise(mean_count = mean(count, na.rm = TRUE))
-
-# Join mean counts with sample metadata
-sym_counts <- full_join(sym_counts, metadata)
-
-# Normalize counts by homogenat volume and surface area
-sym_counts <- sym_counts %>%
-  mutate(cells.mL = mean_count * 10000 / Squares.Counted,
-         cells = cells.mL * homog_vol_ml,
-         cells.cm2 = cells / surface.area.cm2)

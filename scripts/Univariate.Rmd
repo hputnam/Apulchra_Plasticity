@@ -1,0 +1,54 @@
+---
+title: "Acropora_Plasticity"
+author: "HM Putnam"
+date: "9/27/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## install packages if you dont already have them
+if (!require("tidyverse")) install.packages("tidyverse")
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("RColorBrewer")) install.packages("RColorBrewer")
+if (!require("lme4")) install.packages("lme4")
+if (!require("lmerTest")) install.packages("lmerTest")
+if (!require("car")) install.packages("car")
+if (!require("effects")) install.packages("effects")
+if (!require("ggfortify")) install.packages("ggfortify")
+if (!require("cowplot")) install.packages("cowplot")
+if (!require("vegan")) install.packages("vegan")
+if (!require("corrr")) install.packages("corrr")
+if (!require("ggcorrplot")) install.packages("ggcorrplot")
+if (!require("GGally")) install.packages("GGally")
+if (!require("broom")) install.packages("broom")
+if (!require("cowplot")) install.packages("cowplot")
+
+# load packages
+library(tidyverse)
+library(ggplot2)
+library(RColorBrewer)
+library(lme4)
+library(lmerTest)
+library(car)
+library(effects)
+library(ggfortify)
+library(cowplot)
+library(vegan)
+library(corrr)
+library(ggcorrplot)
+library(GGally)
+library(broom)
+library(cowplot)
+```
+
+```{r}
+data <- read.csv("/Users/hputnam/MyProjects/Apulchra_Plasticity/data/data_jan_nov_SA.csv", sep=",")
+data$group <- paste0(data$timepoint, data$site_code)
+
+boxplot(data$chla.ug.cm2~data$group, las=2)
+
+```
