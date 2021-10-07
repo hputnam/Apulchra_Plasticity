@@ -11,8 +11,8 @@ library(tidyverse)
 library(plotrix)
 
 #Load Data__________________________________________
-setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity/data/timepoint_0")
-Data <- read.csv("0_biomass/Biomass_Data.csv")
+setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
+Data <- read.csv("data/timepoint_0/0_biomass/Biomass_Data.csv")
 Data <- na.omit(Data)
 
 
@@ -23,7 +23,18 @@ sym <- 5
 host <- 4
 
 #Load tissue homogenate volume
-homog_vol <- read.csv("0_homogenate_vols/0_homogenate_vols.csv", header=TRUE)
+homog_vol <- read.csv("data/timepoint_0/0_homogenate_vols/0_homogenate_vols.csv", header=TRUE)
 
 # Load Surface area data
-sa <- read.csv("output/1_surface_area.csv")
+sa <- read.csv("output/0_surface_area.csv")
+
+# Coral sample metadata
+metadata <- read_csv("metadata/coral_metadata.csv") %>% select(1:3)
+
+#colony_id column messed up in naming so go back and name it again
+homog_vol <- homog_vol %>%
+  mutate(colony_id = ï..colony_id)
+
+# Join homogenate volumes and surface area with sample metadata
+metadata <- full_join(metadata, homog_vol) %>%
+  full_join(sa)
