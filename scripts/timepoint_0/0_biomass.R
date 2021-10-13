@@ -44,9 +44,10 @@ Data <- Data %>%
   mutate(dry.biomass.g = (dry.pan.mass.g.vol.corr - initial.mass.g),
          DW.mg.cm2 = ((dry.biomass.g)*1000)/ surface.area.cm2)
 
-
+#condensing down output file to just the columns we want
 Data <- Data %>%
   mutate(burnt.biomass.g = (dry.pan.mass.g.vol.corr - burnt.pan.mass.g.vol.corr ),
          AFDW.mg.cm2 = ((burnt.biomass.g)*1000)/ surface.area.cm2) %>%
+  select(colony_id, site, species, timepoint, DW.mg.cm2, AFDW.mg.cm2)
   write_csv(path = "output/0_biomass_output.csv")
 
