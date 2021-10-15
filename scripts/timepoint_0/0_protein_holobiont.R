@@ -105,7 +105,7 @@ sa <- read.csv("output/0_surface_area.csv")
 homog_vols <- read_csv("data/timepoint_0/0_homogenate_vols/0_homogenate_vols.csv") %>% select(1:2)
 
 # Coral sample metadata
-metadata <- read_csv("metadata/coral_metadata.csv") %>% select(1:3)
+metadata <- read_csv("metadata/coral_metadata.csv") 
 
 # Join homogenate volumes and surface area with sample metadata
 metadata <- full_join(metadata, homog_vols) %>%
@@ -117,27 +117,46 @@ holo_prot <- left_join(holo_prot, metadata) %>%
          prot_ug.cm2 = prot_ug / surface.area.cm2,
          prot_mg.cm2 = prot_ug.cm2 / 1000)
 
+holo_prot <- holo_prot %>% 
+  filter(species == "Acropora") %>%
+  filter(genotype != "NA")
+  
+
+
+holo_prot <- holo_prot %>% 
+  group_by(colony_id, site, genotype) %>%
+  summarise(prot_ug = mean(prot_ug, na.rm = T),
+   prot_ug.cm2 = mean(prot_ug.cm2, na.rm = T)) 
+
 #Plot of the Data for each Site
 holo_prot %>%
-  filter(species == "Acropora") %>%
-  ggplot(aes(x = site, y = prot_mg.cm2, color = site)) +
-  coord_cartesian(ylim = c(0, 0.5))+
-  labs(x = "Site", y = "Total protein (mg/cm2)", color = "Site") +
+  ggplot(aes(x = site, y = prot_ug.cm2, color = site)) +
+  #coord_cartesian(ylim = c(0, 0.5))+
+  labs(x = "Site", y = "Total protein (µg/cm2)", color = "Site") +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun.y = mean, geom = "point", color = "black")           # Plot mean
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
 
 #Quick Stats on Site vs Protein Content for all the corals
-model2 <- aov(prot_mg.cm2 ~ site, data = holo_prot)
+model2 <- aov(log10(prot_ug.cm2) ~ site, data = holo_prot)
 anova(model2)
 TukeyHSD(model2)
+par(mfrow=c(2,2))
+boxplot(model2$residuals)
+hist(model2$residuals)
+plot(model2$fitted.values, model2$residuals)
 
+# All sites
 holo_prot %>%
-  filter(species == "Acropora") %>%
   group_by(colony_id, site) %>%
   summarise(prot_ug = mean(prot_ug, na.rm = T),
             prot_ug.cm2 = mean(prot_ug.cm2, na.rm = T)) %>%
   select(colony_id, site, prot_ug, prot_ug.cm2) %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_holobiont_protein.csv")
+
+# Nursery 4 genotypes
+holo_prot_4geno <- holo_prot %>%
+  filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+  write_csv(., path = "output/0_holobiont_protein_4geno.csv")
