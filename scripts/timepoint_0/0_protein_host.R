@@ -140,6 +140,17 @@ boxplot(model1$residuals)
 hist(model1$residuals)
 plot(model1$fitted.values, model1$residuals)
 
+#save for concatenation
+host.prot_res <- anova(model1)
+host.prot_tkyhsd_res <- TukeyHSD(model1)
+
+# add HOST PROTEIN to concatenated .txt file
+cat("D) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+
+
+
 host_prot %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_host_protein.csv")

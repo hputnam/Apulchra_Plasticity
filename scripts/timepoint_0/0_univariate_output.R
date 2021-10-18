@@ -8,9 +8,14 @@ chla <- read.csv("output/0_chlorophylla.csv")
 chla$variable <- colnames(chla[3])
 colnames(chla)[3] <- "value"
 
+
 chlc2 <- read.csv("output/0_chlorophyllc.csv")
 chlc2$variable <- colnames(chlc2[3])
 colnames(chlc2)[3] <- "value"
+#CHL C stats
+model3 <- aov(log10(chlc2.ug.cm2) ~ site, data = chl_data)
+anova(model3)
+TukeyHSD(model3)
 
 prot.holo <- read.csv("output/0_holobiont_protein.csv")
 prot.holo$variable <- colnames(prot.holo[3])
@@ -62,3 +67,113 @@ Uni.Fig
 
 
 ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig, width=10, height=8)
+
+#_________________________________________________________________________________________________________
+## TO concatonate the output of all the ANOVA with corresponding TukeyHSD data analyses for each univariate metric
+#Table of UNIVARIATE RESPONSEs ANOVA and HSD Results
+
+# Creating the Title of the New File
+cat("Table_TP0_Univariates.vs.Site_ANOVA_HSD\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt")
+
+# add ANOVA in CHL A data
+cat("A) ANOVA results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chla_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in CHL A data
+cat("A) TukeyHSD results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chla_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+#add ANOVA in CHLC data
+cat("B) ANOVA results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chlc2_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+#add TukeyHSD in CHLC data
+cat("B) TukeyHSD results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chlc2_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+# add SYM COUNTS
+cat("C) ANOVA results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym.counts_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+# add TukeyHSD in SYM COUNTS
+cat("C) TukeyHSD results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym.counts_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add ANOVA HOST PROTEIN
+cat("D) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in HOST PROTEIN
+cat("D) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add HOLOBIONT PROTEIN
+cat("E) ANOVA results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(holo.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in HOLOBIONT PROTEIN
+cat("E) TukeyHSD results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(holo.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add AFDW
+cat("F) ANOVA results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in AFDW
+cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+#_________________________________________________________________________________________________________
+
+#Table of UNIVARIATE RESPONSEs (TUKEYHSD Results)
+
+# Creating the Title of the New File
+cat("Table_TP0_Univariates.vs.Site_TUKEYHSD\n\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt")
+
+# add TukeyHSD in CHL A data
+cat("A) TukeyHSD results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chla_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+#add TukeyHSD in CHLC data
+cat("B) TukeyHSD results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chlc2_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in SYM COUNTS
+cat("C) TukeyHSD results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym.counts_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+# add TukeyHSD in HOST PROTEIN
+cat("D) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in HOLOBIONT PROTEIN
+cat("E) TukeyHSD results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(holo.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in AFDW
+cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+

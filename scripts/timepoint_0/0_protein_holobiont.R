@@ -147,6 +147,21 @@ boxplot(model4$residuals)
 hist(model4$residuals)
 plot(model4$fitted.values, model4$residuals)
 
+#save for concatenation
+holo.prot_res <- anova(model4)
+holo.prot_tkyhsd_res <- TukeyHSD(model4)
+
+# add HOLOBIONT PROTEIN (ANOVA)
+cat("E) ANOVA results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+capture.output(holo.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+
+# add HOLOBIONT PROTEIN (TukeyHSD)
+cat("E) TukeyHSD results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+capture.output(holo.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+
+
 # All sites
 holo_prot %>%
   group_by(colony_id, site) %>%

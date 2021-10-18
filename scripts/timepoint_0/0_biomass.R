@@ -25,7 +25,7 @@ metadata <- read_csv("metadata/coral_metadata.csv") %>% select(1:3)
 
 #colony_id column messed up in naming so go back and name it again
 homog_vol <- homog_vol %>%
-  mutate(colony_id = ?..colony_id)
+  mutate(colony_id = ï..colony_id)
 
 # Join homogenate volumes and surface area with sample metadata
 Data <- full_join(Data, homog_vol) %>%
@@ -67,6 +67,21 @@ par(mfrow=c(2,2))
 boxplot(model$residuals)
 hist(model$residuals)
 plot(model$fitted.values, model$residuals)
+
+#save for concatenation
+afdw_res <- anova(model)
+afdw_tkyhsd_res <- TukeyHSD(model)
+
+# add AFDW to written output file (ANOVA)
+cat("F) ANOVA results of AFDW (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+
+# add AFDW (TukeyHSD)
+cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+
 
 #condensing down output file to just the columns we want
 Data <- Data %>%

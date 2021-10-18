@@ -63,6 +63,10 @@ boxplot(model5$residuals)
 hist(model5$residuals)
 plot(model5$fitted.values, model5$residuals)
 
+#save for concatenation
+sym.counts_res <- anova(model5)
+sym.counts_tkyhsd_res <- TukeyHSD(model5)
+
 #Output of Summarized Symbiont cells by cm2
 sym_counts3 %>%
   select(colony_id, site, cells.cm2) %>%

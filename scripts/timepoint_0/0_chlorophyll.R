@@ -11,6 +11,7 @@ if (!require("plotrix")) install.packages("plotrix")
 library(tidyverse)
 library(plotrix)
 library(broom)
+library(ggplot2)
 
 #set working directory and save tibble
 
@@ -95,8 +96,9 @@ metadata <- read.csv("metadata/coral_metadata.csv")
 
 #rename sample_id column because it is having issues
 metadata <- metadata %>%
-  mutate(colony_id = ?..colony_id) %>%
+  mutate(colony_id = ï..colony_id) %>%
   select(colony_id, species, site, genotype, purpose)
+  
 
 chl_data <- full_join(chl_data, metadata)
 
@@ -114,7 +116,7 @@ Fig.1 <- chl_data %>%
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun.y = mean, geom = "point", color = "black")           # Plot mean
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
 
 #Quick Stats on Site vs chla [] for all the corals
 model2 <- aov(log10(chla.ug.cm2) ~ site, data = chl_data)
@@ -125,6 +127,17 @@ boxplot(model2$residuals)
 hist(model2$residuals)
 plot(model2$fitted.values, model2$residuals)
 
+#Output Stats to Reference Later in Concatenation
+chla_res <-anova(model2)
+chla_tkyhsd_res <- TukeyHSD(model2)
+
+# add ANOVA in CHL A data
+cat("A) ANOVA results of Chl a at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+capture.output(chla_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+
+
+
 #Plot of the CHL_a Data for each Site
 Fig.2 <- chl_data %>%
   ggplot(aes(x = site, y = chlc2.ug.cm2, color = site)) +
@@ -133,7 +146,7 @@ Fig.2 <- chl_data %>%
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun.y = mean, geom = "point", color = "black")           # Plot mean
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
 
 #Quick Stats on Site vs chlc [] for all the corals
 model3 <- aov(log10(chlc2.ug.cm2) ~ site, data = chl_data)
@@ -143,7 +156,17 @@ par(mfrow=c(2,2))
 boxplot(model3$residuals)
 hist(model3$residuals)
 plot(model3$fitted.values, model3$residuals)
-  
+
+#Output Stats to Reference Later in Concatenation 
+chlc2_res <- anova(model3)
+chlc2_tkyhsd_res <- TukeyHSD(model3)
+
+# add CHLC
+cat("B) ANOVA results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+capture.output(chlc2_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+
+
 # write chlorophyll data to output csv file
 chl_data %>%
   select(colony_id, site, chla.ug.cm2) %>%
