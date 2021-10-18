@@ -68,9 +68,17 @@ Uni.Fig
 
 ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig, width=10, height=8)
 
+
 #_________________________________________________________________________________________________________
 ## TO concatonate the output of all the ANOVA with corresponding TukeyHSD data analyses for each univariate metric
 #Table of UNIVARIATE RESPONSEs ANOVA and HSD Results
+#ORDER to Cat Scripts in: 
+  #1) Chl a
+  #2) chl c 
+  #3) Sym Counts
+  #4) Host Protein
+  #5) Holobiont Protein
+  #6) AFDW
 
 # Creating the Title of the New File
 cat("Table_TP0_Univariates.vs.Site_ANOVA_HSD\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt")
