@@ -68,19 +68,19 @@ boxplot(model$residuals)
 hist(model$residuals)
 plot(model$fitted.values, model$residuals)
 
-#save for concatenation
+#save for concatenation to same file (both Tukey and ANOVA in same file)
 afdw_res <- anova(model)
 afdw_tkyhsd_res <- TukeyHSD(model)
 
-# add AFDW to written output file (ANOVA)
-cat("F) ANOVA results of AFDW (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+# add ANOVA in AFDW
+cat("F) ANOVA results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
-# add AFDW (TukeyHSD)
-cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
-capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = TRUE)
+# add TukeyHSD in AFDW
+cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
 #condensing down output file to just the columns we want

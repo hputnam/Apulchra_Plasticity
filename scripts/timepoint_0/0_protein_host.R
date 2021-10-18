@@ -144,11 +144,15 @@ plot(model1$fitted.values, model1$residuals)
 host.prot_res <- anova(model1)
 host.prot_tkyhsd_res <- TukeyHSD(model1)
 
-# add HOST PROTEIN to concatenated .txt file
-cat("D) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+# add ANOVA HOST PROTEIN
+cat("D) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
+# add TukeyHSD in HOST PROTEIN
+cat("D) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
 host_prot %>%

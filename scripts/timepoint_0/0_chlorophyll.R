@@ -127,14 +127,19 @@ boxplot(model2$residuals)
 hist(model2$residuals)
 plot(model2$fitted.values, model2$residuals)
 
-#Output Stats to Reference Later in Concatenation
+#Output Stats to Referencein Concatenation (Tukey and ANOVA in same output file)
 chla_res <-anova(model2)
 chla_tkyhsd_res <- TukeyHSD(model2)
 
 # add ANOVA in CHL A data
-cat("A) ANOVA results of Chl a at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-capture.output(chla_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+cat("A) ANOVA results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chla_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# add TukeyHSD in CHL A data
+cat("A) TukeyHSD results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chla_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
 
@@ -157,14 +162,19 @@ boxplot(model3$residuals)
 hist(model3$residuals)
 plot(model3$fitted.values, model3$residuals)
 
-#Output Stats to Reference Later in Concatenation 
+#Output Stats to Reference Later in Concatenation (both TUkey and ANOVA in same file)
 chlc2_res <- anova(model3)
 chlc2_tkyhsd_res <- TukeyHSD(model3)
 
-# add CHLC
-cat("B) ANOVA results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-capture.output(chlc2_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA.txt", append = TRUE)
+#add ANOVA in CHLC data
+cat("B) ANOVA results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chlc2_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+#add TukeyHSD in CHLC data
+cat("B) TukeyHSD results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(chlc2_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
 # write chlorophyll data to output csv file

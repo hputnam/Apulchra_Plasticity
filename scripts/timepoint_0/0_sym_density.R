@@ -63,9 +63,21 @@ boxplot(model5$residuals)
 hist(model5$residuals)
 plot(model5$fitted.values, model5$residuals)
 
-#save for concatenation
+#save for concatenation (both Tukey and ANOVA to same output file)
 sym.counts_res <- anova(model5)
 sym.counts_tkyhsd_res <- TukeyHSD(model5)
+
+# add SYM COUNTS
+cat("C) ANOVA results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym.counts_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+# add TukeyHSD in SYM COUNTS
+cat("C) TukeyHSD results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym.counts_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
 
 #Output of Summarized Symbiont cells by cm2
 sym_counts3 %>%
