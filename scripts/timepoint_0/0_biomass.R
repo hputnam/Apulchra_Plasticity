@@ -44,10 +44,32 @@ Data <- Data %>%
   mutate(dry.biomass.g = (dry.pan.mass.g.vol.corr - initial.mass.g),
          DW.mg.cm2 = ((dry.biomass.g)*1000)/ surface.area.cm2)
 
-#condensing down output file to just the columns we want
 Data <- Data %>%
   select(colony_id, site, species, timepoint, dry.pan.mass.g.vol.corr, burnt.pan.mass.g.vol.corr, surface.area.cm2, DW.mg.cm2) %>%
   mutate(burnt.biomass.g = (dry.pan.mass.g.vol.corr - burnt.pan.mass.g.vol.corr),
-         AFDW.mg.cm2 = ((burnt.biomass.g)*1000)/ surface.area.cm2) %>%
+         AFDW.mg.cm2 = ((burnt.biomass.g)*1000)/ surface.area.cm2)
+
+#Plot of the Data for each Site
+Fig.6 <- Data %>%
+  ggplot(aes(x = site, y = AFDW.mg.cm2, color = site)) +
+  coord_cartesian(ylim = c(0, 3))+
+  labs(x = "Site", y = "Ash Free Dry Weight (mg/cm2)", color = "Site") +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+
+#Quick Stats on Site vs Protein Content for all the corals
+model6 <- aov(log10(AFDW.mg.cm2) ~ site, data = Data)
+anova(model6)
+TukeyHSD(model6)
+par(mfrow=c(2,2))
+boxplot(model5$residuals)
+hist(model5$residuals)
+plot(model5$fitted.values, model5$residuals)
+
+#condensing down output file to just the columns we want
+Data <- Data %>%
+  select(colony_id, site, species, timepoint, AFDW.mg.cm2) %>%
   write_csv(path = "output/0_biomass_output.csv")
 
