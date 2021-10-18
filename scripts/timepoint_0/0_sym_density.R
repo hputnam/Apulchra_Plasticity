@@ -44,3 +44,28 @@ sym_counts3 <- sym_counts2 %>%
          cells = cells.mL * homog_vol_ml,
          cells.cm2 = cells / surface.area.cm2)
 
+#Plot of the Data for each Site
+Fig.5 <- sym_counts3 %>%
+  ggplot(aes(x = site, y = cells.cm2, color = site)) +
+  coord_cartesian(ylim = c(0, 2.5e6))+
+  labs(x = "Site", y = "Symbiont Density (cells/cm2)", color = "Site") +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+
+#Quick Stats on Site vs Protein Content for all the corals
+model5 <- aov(log10(cells.cm2) ~ site, data = sym_counts3)
+anova(model5)
+TukeyHSD(model5)
+par(mfrow=c(2,2))
+boxplot(model5$residuals)
+hist(model5$residuals)
+plot(model5$fitted.values, model5$residuals)
+
+#Output of Summarized Symbiont cells by cm2
+sym_counts3 %>%
+  select(colony_id, site, timepoint, cells.cm2) %>%
+  mutate(timepoint="timepoint0")%>%
+  write_csv(., path = "output/0_sym_counts.csv")
+
