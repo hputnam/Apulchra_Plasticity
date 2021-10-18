@@ -10,6 +10,7 @@ if (!require("plotrix")) install.packages("plotrix")
 # load packages
 library(tidyverse)
 library(plotrix)
+library(broom)
 
 #set working directory and save tibble
 
@@ -78,7 +79,7 @@ chl_data <- full_join(df, homog.vol)
 
 # Load surface area
 sa <- read_csv("output/0_surface_area.csv")
-chl_data <- full_join(chl, sa)
+chl_data <- full_join(chl_data, sa)
 
 
 # Multiply chlorophyll by the homogenate volume and divide by surface area
@@ -102,6 +103,46 @@ chl_data <- full_join(chl_data, metadata)
 #filter out for only Acropora species
 chl_data <- chl_data %>%
   filter(species == "Acropora")
+
+#graphing the Chlorophyll data for each site
+
+#Plot of the CHL_a Data for each Site
+Fig.1 <- chl_data %>%
+  ggplot(aes(x = site, y = chla.ug.cm2, color = site)) +
+  coord_cartesian(ylim = c(0, 5))+
+  labs(x = "Site", y = "Chl A Concentration (ug/cm2)", color = "Site") +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun.y = mean, geom = "point", color = "black")           # Plot mean
+
+#Quick Stats on Site vs chla [] for all the corals
+model2 <- aov(log10(chla.ug.cm2) ~ site, data = chl_data)
+anova(model2)
+TukeyHSD(model2)
+par(mfrow=c(2,2))
+boxplot(model2$residuals)
+hist(model2$residuals)
+plot(model2$fitted.values, model2$residuals)
+
+#Plot of the CHL_a Data for each Site
+Fig.2 <- chl_data %>%
+  ggplot(aes(x = site, y = chlc2.ug.cm2, color = site)) +
+  coord_cartesian(ylim = c(0, 8)) +
+  labs(x = "Site", y = "Chl C Concentration (ug/cm2)", color = "Site") +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun.y = mean, geom = "point", color = "black")           # Plot mean
+
+#Quick Stats on Site vs chlc [] for all the corals
+model3 <- aov(log10(chlc2.ug.cm2) ~ site, data = chl_data)
+anova(model3)
+TukeyHSD(model3)
+par(mfrow=c(2,2))
+boxplot(model3$residuals)
+hist(model3$residuals)
+plot(model3$fitted.values, model3$residuals)
   
 # write chlorophyll data to output csv file
 chl_data %>%
