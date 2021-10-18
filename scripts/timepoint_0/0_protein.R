@@ -114,20 +114,24 @@ host_prot <- left_join(host_prot, metadata) %>%
          prot_mg.cm2 = prot_ug.cm2 / 1000)
 
 #Plot of the Data for each Site
-host_prot %>%
+Fig.3 <- host_prot %>%
   filter(species == "Acropora") %>%
   ggplot(aes(x = site, y = prot_mg.cm2, color = site)) +
   coord_cartesian(ylim = c(0, 0.5))+
-  labs(x = "Site", y = "Total protein (mg/cm2)", color = "Site") +
+  labs(x = "Site", y = "Total Host protein (mg/cm2)", color = "Site") +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
   stat_summary(fun.y = mean, geom = "point", color = "black")           # Plot mean
 
 #Quick Stats on Site vs Protein Content for all the corals
-model1 <- aov(prot_mg.cm2 ~ site, data = host_prot)
+model1 <- aov(log10(prot_ug.cm2) ~ site, data = host_prot)
 anova(model1)
 TukeyHSD(model1)
+par(mfrow=c(2,2))
+boxplot(model1$residuals)
+hist(model1$residuals)
+plot(model1$fitted.values, model1$residuals)
 
 host_prot %>%
   filter(species == "Acropora") %>%
