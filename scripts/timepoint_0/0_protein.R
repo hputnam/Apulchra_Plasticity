@@ -9,6 +9,7 @@ if (!require("broom")) install.packages("broom")
 # load packages
 library(tidyverse)
 library(broom)
+library(dplyr)
 
 #setworking directory 
 setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
@@ -113,11 +114,18 @@ host_prot <- left_join(host_prot, metadata) %>%
          prot_ug.cm2 = prot_ug / surface.area.cm2,
          prot_mg.cm2 = prot_ug.cm2 / 1000)
 
+#CANNOT GET TO WORK
+#Filtering down data and averaging by colony-id for ug.cm2 of protein
+host_prot %>%
+  filter(species == "Acropora") %>%
+  group_by(colony_id, site) %>%
+  summarise(avg_prot_ug.cm2 = mean(prot_ug.cm2, .groups = "drop"))
+
 #Plot of the Data for each Site
 Fig.3 <- host_prot %>%
   filter(species == "Acropora") %>%
-  ggplot(aes(x = site, y = prot_mg.cm2, color = site)) +
-  coord_cartesian(ylim = c(0, 0.5))+
+  ggplot(aes(x = site, y = prot_ug.cm2, color = site)) +
+  coord_cartesian(ylim = c(0, 600))+
   labs(x = "Site", y = "Total Host protein (mg/cm2)", color = "Site") +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -134,10 +142,6 @@ hist(model1$residuals)
 plot(model1$fitted.values, model1$residuals)
 
 host_prot %>%
-  filter(species == "Acropora") %>%
-  group_by(colony_id, site) %>%
-  summarise(prot_ug = mean(prot_ug, na.rm = T),
-            prot_ug.cm2 = mean(prot_ug.cm2, na.rm = T)) %>%
-  select(colony_id, site, prot_ug, prot_ug.cm2) %>%
+  select(colony_id, site, avg_prot_mg.cm2, avg_prot_ug.cm2) %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_host_protein.csv")
