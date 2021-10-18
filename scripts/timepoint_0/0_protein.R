@@ -119,7 +119,7 @@ host_prot <- left_join(host_prot, metadata) %>%
 host_prot %>%
   filter(species == "Acropora") %>%
   group_by(colony_id, site) %>%
-  summarise(avg_prot_ug.cm2 = mean(prot_ug.cm2, .groups = "drop"))
+  summarise(avg_prot_ug.cm2 = mean(prot_ug.cm2, .groups = drop))
 
 #Plot of the Data for each Site
 Fig.3 <- host_prot %>%
