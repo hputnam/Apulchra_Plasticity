@@ -25,7 +25,7 @@ metadata <- read_csv("metadata/coral_metadata.csv") %>% select(1:3)
 
 #colony_id column messed up in naming so go back and name it again
 homog_vol <- homog_vol %>%
-  mutate(colony_id = ï..colony_id)
+  mutate(colony_id = ?..colony_id)
 
 # Join homogenate volumes and surface area with sample metadata
 Data <- full_join(Data, homog_vol) %>%
@@ -60,16 +60,17 @@ Fig.6 <- Data %>%
   stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
 
 #Quick Stats on Site vs Protein Content for all the corals
-model6 <- aov(log10(AFDW.mg.cm2) ~ site, data = Data)
-anova(model6)
-TukeyHSD(model6)
+model <- aov(log10(AFDW.mg.cm2) ~ site, data = Data)
+anova(model)
+TukeyHSD(model)
 par(mfrow=c(2,2))
-boxplot(model5$residuals)
-hist(model5$residuals)
-plot(model5$fitted.values, model5$residuals)
+boxplot(model$residuals)
+hist(model$residuals)
+plot(model$fitted.values, model$residuals)
 
 #condensing down output file to just the columns we want
 Data <- Data %>%
-  select(colony_id, site, species, timepoint, AFDW.mg.cm2) %>%
+  select(colony_id, site, AFDW.mg.cm2, timepoint) %>%
   write_csv(path = "output/0_biomass_output.csv")
+
 

@@ -62,7 +62,7 @@ df <- df %>%
          adj663 = `663` - blank750)
 
 # calculate chla and chlc2 values based on equations from Jeffrey and Humphrey 1975
-# units µg/ml
+# units ?g/ml
 df <- df %>%
   mutate(chla.ug.ml = 11.43 * adj663 - 0.64 * adj630,
          chlc2.ug.ml = 27.09 * adj630 - 3.63 * adj663)
@@ -95,7 +95,7 @@ metadata <- read.csv("metadata/coral_metadata.csv")
 
 #rename sample_id column because it is having issues
 metadata <- metadata %>%
-  mutate(colony_id = ï..colony_id) %>%
+  mutate(colony_id = ?..colony_id) %>%
   select(colony_id, species, site, genotype, purpose)
 
 chl_data <- full_join(chl_data, metadata)
@@ -146,11 +146,15 @@ plot(model3$fitted.values, model3$residuals)
   
 # write chlorophyll data to output csv file
 chl_data %>%
-  select(colony_id, site, chla.ug.cm2, chlc2.ug.cm2) %>%
+  select(colony_id, site, chla.ug.cm2) %>%
   mutate(timepoint="timepoint0")%>%
-  write_csv(path = "output/0_chlorophyll.csv")
+  write_csv(path = "output/0_chlorophylla.csv")
 
-
+# write chlorophyll data to output csv file
+chl_data %>%
+  select(colony_id, site,  chlc2.ug.cm2) %>%
+  mutate(timepoint="timepoint0")%>%
+  write_csv(path = "output/0_chlorophyllc.csv")
 
 
 

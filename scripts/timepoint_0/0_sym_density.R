@@ -65,7 +65,7 @@ plot(model5$fitted.values, model5$residuals)
 
 #Output of Summarized Symbiont cells by cm2
 sym_counts3 %>%
-  select(colony_id, site, timepoint, cells.cm2) %>%
+  select(colony_id, site, cells.cm2) %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_sym_counts.csv")
 

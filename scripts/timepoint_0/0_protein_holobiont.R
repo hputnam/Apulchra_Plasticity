@@ -132,7 +132,7 @@ holo_prot <- holo_prot %>%
 Fig.4 <- holo_prot %>%
   ggplot(aes(x = site, y = prot_ug.cm2, color = site)) +
   coord_cartesian(ylim = c(0, 600))+
-  labs(x = "Site", y = "Total Holobiont protein (µg/cm2)", color = "Site") +
+  labs(x = "Site", y = "Total Holobiont protein (?g/cm2)", color = "Site") +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
@@ -152,9 +152,10 @@ holo_prot %>%
   group_by(colony_id, site) %>%
   summarise(prot_ug = mean(prot_ug, na.rm = T),
             prot_ug.cm2 = mean(prot_ug.cm2, na.rm = T)) %>%
-  select(colony_id, site, prot_ug, prot_ug.cm2) %>%
+  select(colony_id, site, prot_ug.cm2) %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_holobiont_protein.csv")
+
 
 # Nursery 4 genotypes
 holo_prot_4geno <- holo_prot %>%
