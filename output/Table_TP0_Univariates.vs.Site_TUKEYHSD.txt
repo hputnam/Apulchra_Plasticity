@@ -1,0 +1,80 @@
+Table_TP0_Univariates.vs.Site_TUKEYHSD
+
+A) TukeyHSD results of Chl a (ug/cm2) at TP0 sites
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(chla.ug.cm2) ~ site, data = chl_data)
+
+$site
+                    diff         lwr         upr     p adj
+site1-nursery  0.5962088  0.37300301  0.81941455 0.0000241
+site2-nursery  0.2418845  0.01867868  0.46509022 0.0334127
+site2-site1   -0.3543243 -0.63117701 -0.07747165 0.0127611
+
+
+B) TukeyHSD results of Chl c (ug/cm2) at TP0 sites
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(chlc2.ug.cm2) ~ site, data = chl_data)
+
+$site
+                    diff         lwr        upr     p adj
+site1-nursery  0.6732226  0.45288116  0.8935641 0.0000057
+site2-nursery  0.2381869  0.01784545  0.4585284 0.0338525
+site2-site1   -0.4350357 -0.70833567 -0.1617358 0.0027630
+
+
+C) TukeyHSD results of Sym.Counts (cells/cm2) at TP0 sites
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(cells.cm2) ~ site, data = sym_counts3)
+
+$site
+                    diff          lwr       upr     p adj
+site1-nursery  0.2465829 -0.002302752 0.4954686 0.0522545
+site2-nursery  0.1338704 -0.115015298 0.3827561 0.3596286
+site2-site1   -0.1127125 -0.421417245 0.1959922 0.6112591
+
+
+D) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(avg_prot_ug.cm2) ~ site, data = host_prot)
+
+$site
+                    diff         lwr       upr     p adj
+site1-nursery  0.4093049  0.20697595 0.6116338 0.0003669
+site2-nursery  0.2894106  0.08708163 0.4917395 0.0060748
+site2-site1   -0.1198943 -0.37085248 0.1310639 0.4402697
+
+
+E) TukeyHSD results of Holobiont Protein (ug/cm2) at TP0 sites
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(prot_ug.cm2) ~ site, data = holo_prot)
+
+$site
+                    diff         lwr       upr     p adj
+site1-nursery  0.4412608  0.20293418 0.6795873 0.0012664
+site2-nursery  0.2987220  0.06039542 0.5370486 0.0160087
+site2-site1   -0.1425388 -0.42453058 0.1394531 0.3841379
+
+
+F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(avg_prot_ug.cm2) ~ site, data = host_prot)
+
+$site
+                    diff         lwr       upr     p adj
+site1-nursery  0.4093049  0.20697595 0.6116338 0.0003669
+site2-nursery  0.2894106  0.08708163 0.4917395 0.0060748
+site2-site1   -0.1198943 -0.37085248 0.1310639 0.4402697
+
+

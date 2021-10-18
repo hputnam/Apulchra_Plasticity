@@ -1,0 +1,62 @@
+Table_TP0_Univariates.vs.Site_ANOVA
+
+A) ANOVA results of Chl a (ug/cm2) at TP0 sites
+Analysis of Variance Table
+
+Response: log10(chla.ug.cm2)
+          Df  Sum Sq Mean Sq F value    Pr(>F)    
+site       2 0.84682 0.42341  25.676 3.055e-05 ***
+Residuals 13 0.21438 0.01649                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+B) ANOVA results of Chl c (ug/cm2) at TP0 sites
+Analysis of Variance Table
+
+Response: log10(chlc2.ug.cm2)
+          Df  Sum Sq Mean Sq F value    Pr(>F)    
+site       2 1.06263 0.53132  33.062 7.973e-06 ***
+Residuals 13 0.20891 0.01607                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+C) ANOVA results of Sym.Counts (cells/cm2) at TP0 sites
+Analysis of Variance Table
+
+Response: log10(cells.cm2)
+          Df  Sum Sq  Mean Sq F value  Pr(>F)  
+site       2 0.15475 0.077377  3.7739 0.05101 .
+Residuals 13 0.26654 0.020503                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+D) ANOVA results of Host Protein (ug/cm2) at TP0 sites
+Analysis of Variance Table
+
+Response: log10(avg_prot_ug.cm2)
+          Df  Sum Sq Mean Sq F value    Pr(>F)    
+site       2 0.47925 0.23963  17.684 0.0001954 ***
+Residuals 13 0.17615 0.01355                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+E) ANOVA results of Holobiont Protein (ug/cm2) at TP0 sites
+Analysis of Variance Table
+
+Response: log10(prot_ug.cm2)
+          Df  Sum Sq  Mean Sq F value   Pr(>F)   
+site       2 0.47275 0.236374  14.892 0.001003 **
+Residuals 10 0.15873 0.015873                    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+F) ANOVA results of AFDW (mg/cm2) at TP0 sites
+Analysis of Variance Table
+
+Response: log10(avg_prot_ug.cm2)
+          Df  Sum Sq Mean Sq F value    Pr(>F)    
+site       2 0.47925 0.23963  17.684 0.0001954 ***
+Residuals 13 0.17615 0.01355                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
