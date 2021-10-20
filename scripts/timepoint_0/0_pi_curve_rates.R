@@ -54,6 +54,8 @@ df <- tibble(file.name = file.names) %>%
          info = map(colony_id, ~filter(metadata, colony_id == .)),           # Get associated sample info
          data0 = map(file.name, ~read_csv(file.path(path.p, .), skip = 1)))   # Get associated O2 data
 
+
+
 # Select only Time, Value, and Temp columns from O2 data
 df <- df %>%
   mutate(data0 = map(data0, ~select(., Time, Value, Temp))) 
