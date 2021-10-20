@@ -193,18 +193,18 @@ cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = 
 path.p <- "output" #the location of all your respirometry files 
 file.names <- list.files(path = path.p, pattern = "*4geno.csv")  # list all csv file names in the folder
 
+#Couldn't get the more efficient coding to work well...so I manually did it
+#df <- path.p %>%
+  #list.files(path = ., pattern = "*4geno.csv") %>%
+  #lapply(read_csv) %>% 
+  #bind_rows 
 
-df <- path.p %>%
-  list.files(path = ., pattern = "*4geno.csv") %>%
-  lapply(read_csv) %>% 
-  bind_rows 
-
-df <- tibble(file.name = file.names) %>%
-  mutate(metric = gsub("_.*", "", file.name),
-         info = map(metric, ~filter(metadata, colony_id == .)),           # Get associated sample info
-         data0 = map(file.name, ~read_csv(file.path(path.p, .), skip = 1))) %>%
-  lapply(read_csv) %>% 
-  bind_rows 
+#df <- tibble(file.name = file.names) %>%
+  #mutate(metric = gsub("_.*", "", file.name),
+         #info = map(metric, ~filter(metadata, colony_id == .)),           # Get associated sample info
+         #data0 = map(file.name, ~read_csv(file.path(path.p, .), skip = 1))) %>%
+  #lapply(read_csv) %>% 
+ #bind_rows 
 
 #manual way to merge it
 biomass <- read.csv("output/0_biomass_4geno.csv")
@@ -257,4 +257,52 @@ timeseries_data <- timeseries_data %>%
   mutate(colony_id = ï..colony_id) %>%
   select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
 
-Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data)
+Apul_Plast_Metadata <- Apul_Plast_Metadata %>%
+  rbind(geno_metadata, timeseries_data) %>%
+  write_csv(., path = "data/complete_timeseries_data.csv")
+
+
+####UNIVARIATE Figures and Analysis ---- NOT WORKING
+library(RColorBrewer)
+#Plot Biomass
+ggplot(Apul_Plast_Metadata, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+  geom_boxplot() +
+  geom_point(pch = 21, size=2, position = position_jitterdodge(0.2)) + 
+  #scale_fill_manual(values = display.brewer.pal(3,"YlGnBu"), limits=c("October 2019", "January 2020", "November 2020"))+
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
+                            "Manava High" = "Manava \nHigh"))+
+  labs(fill = "Month") +
+  xlab("Site") + 
+  ylab(expression(bold(paste("Holobiont Biomass (mg/cm2)"))))+
+  theme_classic() + 
+  theme(
+    legend.title=element_text(face="bold", size=14),
+    legend.text=element_text(size=14),
+    axis.title=element_text(face="bold", size=14),
+    axis.text=element_text(size=10, color="black"), 
+    strip.text.x=element_text(face="italic", size=14)
+  )
+
+timeseries_biomass <- Apul_Plast_Metadata %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2)
+
+ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+  geom_boxplot() +
+  geom_point(aes(shape = Genotype), size=2, position = position_jitterdodge(0.2), labels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
+                            "Manava High" = "Manava \nHigh"))+
+  labs(fill = "Month", labels = c("October 2019", "January 2020", "November 2020")) +
+  xlab("Site") + 
+  ylab(expression(bold(paste("Holobiont Biomass (mg/cm2)"))))+
+  theme_classic() + 
+  theme(
+    legend.title=element_text(face="bold", size=14),
+    legend.text=element_text(size=14),
+    axis.title=element_text(face="bold", size=14),
+    axis.text=element_text(size=10, color="black"), 
+    strip.text.x=element_text(face="italic", size=14)
+  )
+
+ggplot(Apul_Plast_Metadata, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint)) +
+  geom_boxplot() +
+  geom_point(aes(shape = Genotype), size=2, position = position_jitterdodge(0.2))
