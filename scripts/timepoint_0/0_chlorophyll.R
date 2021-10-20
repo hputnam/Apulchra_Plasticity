@@ -190,6 +190,21 @@ chl_data %>%
   write_csv(path = "output/0_chlorophyllc.csv")
 
 
+# Nursery 4 genotypes for CHL A and C
+chla_4geno <- chl_data %>%
+  filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+  select(colony_id, site, genotype, chla.ug.cm2) %>%
+  mutate(timepoint="timepoint0") %>%
+  write_csv(path = "output/0_chlorophylla_4geno.csv")
+
+
+chlc_4geno <- chl_data %>%
+  filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+  select(colony_id, site, genotype, chlc2.ug.cm2) %>%
+  mutate(timepoint="timepoint0")%>%
+  write_csv(path = "output/0_chlorophyllc_4geno.csv")
+
+
 
 
 
