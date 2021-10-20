@@ -95,7 +95,7 @@ biomass_4geno <- full_join(Data, metadata1)
 
 # Nursery 4 genotypes
 biomass_4geno <- biomass_4geno %>%
-  filter(species == "Acropora") %>%
+  #filter(species == "Acropora") %>%
   filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
   select(colony_id, site, genotype, AFDW.mg.cm2, timepoint) %>%
   write_csv(., path = "output/0_biomass_4geno.csv")
