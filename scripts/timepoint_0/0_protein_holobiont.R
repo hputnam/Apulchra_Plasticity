@@ -117,12 +117,12 @@ holo_prot <- left_join(holo_prot, metadata) %>%
          prot_ug.cm2 = prot_ug / surface.area.cm2,
          prot_mg.cm2 = prot_ug.cm2 / 1000)
 
+#filtering out NA values and other coral species
 holo_prot <- holo_prot %>% 
   filter(species == "Acropora") %>%
   filter(genotype != "NA")
   
-
-
+#summarizing/averaging by colony_id
 holo_prot <- holo_prot %>% 
   group_by(colony_id, site, genotype) %>%
   summarise(prot_ug = mean(prot_ug, na.rm = T),
@@ -163,7 +163,7 @@ cat("\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt", append = T
 
 
 # All sites
-holo_prot %>%
+holo_prot <- holo_prot %>%
   group_by(colony_id, site) %>%
   summarise(prot_ug = mean(prot_ug, na.rm = T),
             prot_ug.cm2 = mean(prot_ug.cm2, na.rm = T)) %>%
@@ -171,8 +171,13 @@ holo_prot %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_holobiont_protein.csv")
 
+#re-join with metadata to select genotype information
+# Coral sample metadata
+metadata1 <- read_csv("metadata/coral_metadata.csv") %>% select(1:3,6)
+holo_prot_4geno <- full_join(holo_prot, metadata1)
 
 # Nursery 4 genotypes
-holo_prot_4geno <- holo_prot %>%
+holo_prot_4geno <- holo_prot_4geno %>%
   filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+  select(colony_id, site, genotype, prot_ug.cm2, timepoint) %>%
   write_csv(., path = "output/0_holobiont_protein_4geno.csv")
