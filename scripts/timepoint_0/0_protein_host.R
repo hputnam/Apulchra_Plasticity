@@ -158,3 +158,17 @@ cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append 
 host_prot %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_host_protein.csv")
+
+#re-join with metadata to select genotype information
+# Coral sample metadata
+metadata1 <- read_csv("metadata/coral_metadata.csv") %>% 
+  select(1:3,6) %>%
+  filter(species == "Acropora")
+
+host_prot_4geno <- full_join(holo_prot, metadata1)
+
+# Nursery 4 genotypes
+host_prot_4geno <- host_prot_4geno %>%
+  filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+  select(colony_id, site, genotype, prot_ug.cm2, timepoint) %>%
+  write_csv(., path = "output/0_host_protein_4geno.csv")
