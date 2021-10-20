@@ -267,7 +267,7 @@ library(RColorBrewer)
 #Plot Biomass
 ggplot(Apul_Plast_Metadata, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
   geom_boxplot() +
-  geom_point(pch = 21, size=2, position = position_jitterdodge(0.2)) + 
+  geom_point(fill = timepoint,pch = 21, size=2, position = position_jitterdodge(0.2)) + 
   #scale_fill_manual(values = display.brewer.pal(3,"YlGnBu"), limits=c("October 2019", "January 2020", "November 2020"))+
   scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
                             "Manava High" = "Manava \nHigh"))+
