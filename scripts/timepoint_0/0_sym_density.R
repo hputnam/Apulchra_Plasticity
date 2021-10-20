@@ -85,3 +85,22 @@ sym_counts3 %>%
   mutate(timepoint="timepoint0")%>%
   write_csv(., path = "output/0_sym_counts.csv")
 
+
+#re-join with metadata to select genotype information
+# Coral sample metadata
+sym_counts4 <- sym_counts3 %>%
+  select(colony_id, site, cells.cm2) %>%
+  mutate(timepoint="timepoint0")
+
+metadata1 <- read_csv("metadata/coral_metadata.csv") %>% 
+  select(1:3,6) %>%
+  filter(species == "Acropora")
+
+sym_counts_4geno <- full_join(sym_counts4, metadata1)
+
+# Nursery 4 genotypes
+sym_counts_4geno <- sym_counts_4geno %>%
+  filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+  select(colony_id, site, genotype, cells.cm2, timepoint) %>%
+  write_csv(., path = "output/0_sym_counts_4geno.csv")
+
