@@ -185,3 +185,76 @@ cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_
 capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
+#______________________________________________________________________________________________
+## METADATA FILE CREATION
+#Creating Metadata of all metrics from TP0 for the 4 genotypes going to be compared with the rest of the timeseries
+
+#read in all files to full join
+path.p <- "output" #the location of all your respirometry files 
+file.names <- list.files(path = path.p, pattern = "*4geno.csv")  # list all csv file names in the folder
+
+
+df <- path.p %>%
+  list.files(path = ., pattern = "*4geno.csv") %>%
+  lapply(read_csv) %>% 
+  bind_rows 
+
+df <- tibble(file.name = file.names) %>%
+  mutate(metric = gsub("_.*", "", file.name),
+         info = map(metric, ~filter(metadata, colony_id == .)),           # Get associated sample info
+         data0 = map(file.name, ~read_csv(file.path(path.p, .), skip = 1))) %>%
+  lapply(read_csv) %>% 
+  bind_rows 
+
+#manual way to merge it
+biomass <- read.csv("output/0_biomass_4geno.csv")
+chla <- read.csv("output/0_chlorophylla_4geno.csv")
+chlc <- read.csv("output/0_chlorophyllc_4geno.csv")
+holo_prot <- read.csv("output/0_holobiont_protein_4geno.csv")
+host_prot <- read.csv("output/0_host_protein_4geno.csv")
+sym_counts <- read.csv("output/0_sym_counts_4geno.csv")
+
+#All the individual merges
+geno <- full_join(biomass, chla)
+
+geno <- full_join(geno, chlc)
+
+geno <- full_join(geno, holo_prot)
+
+geno <- full_join(geno, host_prot)
+
+geno_metadata <- full_join(geno, sym_counts)
+
+
+#Converting Apul to ACR to match the timeseries
+geno_metadata [1, 1] <- "ACR-237"
+geno_metadata [2, 1] <- "ACR-234"
+geno_metadata [3, 1] <- "ACR-243"
+geno_metadata [4, 1] <- "ACR-244"
+
+#Edit the current metadata sheet to match the current timeseries metadata
+geno_metadata <- geno_metadata %>%
+  mutate(Genotype = genotype) %>%
+  mutate(month = "19-Oct") %>%
+  mutate(nutrient = "NA") %>%
+  mutate(Am = "NA") %>%
+  mutate(AQY = "NA") %>%
+  mutate(Rd = "NA") %>%
+  mutate(site_code = "Nursery") %>%
+  mutate(chla.ug.cell = geno_metadata$chla.ug.cm2 / geno_metadata$cells.cm2) %>%
+  mutate(chlc2.ug.cell = geno_metadata$chlc2.ug.cm2/ geno_metadata$cells.cm2) %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+
+
+
+###Compiled data from Jan/Nov has host and sym AFDW separated while we have it as one big thing, it is also missing protein.
+##Need to create new column in data that is Holobiont AFDW
+# colony_id, Genotype, timepoint, month, nutrient, site_code
+timeseries_data <- read.csv("data/data_jan_nov_SA.csv")
+
+timeseries_data <- timeseries_data %>%
+  mutate(AFDW.mg.cm2 = timeseries_data$Host_AFDW.mg.cm2 + timeseries_data$Sym_AFDW.mg.cm2) %>%
+  mutate(colony_id = ï..colony_id) %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+
+Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data)
