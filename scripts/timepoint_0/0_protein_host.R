@@ -165,11 +165,12 @@ metadata1 <- read_csv("metadata/coral_metadata.csv") %>%
   select(1:3,6) %>%
   filter(species == "Acropora")
 
-host_prot_4geno <- full_join(holo_prot, metadata1)
+host_prot_4geno <- full_join(host_prot, metadata1)
 
 # Nursery 4 genotypes
 host_prot_4geno <- host_prot_4geno %>%
   filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
-  mutate(host_prot_ug.cm2 = prot_ug.cm2) %>%
+  mutate(host_prot_ug.cm2 = avg_prot_ug.cm2) %>%
+  mutate(timepoint="timepoint0")%>%
   select(colony_id, site, genotype, host_prot_ug.cm2, timepoint) %>%
   write_csv(., path = "output/0_host_protein_4geno.csv")
