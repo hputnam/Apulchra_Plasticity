@@ -179,5 +179,6 @@ holo_prot_4geno <- full_join(holo_prot, metadata1)
 # Nursery 4 genotypes
 holo_prot_4geno <- holo_prot_4geno %>%
   filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
-  select(colony_id, site, genotype, prot_ug.cm2, timepoint) %>%
+  mutate(holo_prot_ug.cm2 = prot_ug.cm2) %>%
+  select(colony_id, site, genotype, holo_prot_ug.cm2, timepoint) %>%
   write_csv(., path = "output/0_holobiont_protein_4geno.csv")
