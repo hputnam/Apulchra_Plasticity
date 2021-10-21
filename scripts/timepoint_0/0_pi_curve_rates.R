@@ -22,7 +22,7 @@ library(future)
 library(furrr)
 
 #Set Working Directory
-setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
+#setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
 
 path.p <- "data/timepoint_0/0_pi_curves" #the location of all your respirometry files 
 
@@ -48,17 +48,18 @@ metadata <- metadata %>%
 
 
 # Read in all data files - 
-#HAVING ISSUE WITH LINE 7349 (second to last line) in BLANK1 file so deleted temporarily to see if problem persists or not
+#fixed this line of code by deleting column name artifacts in data sheets
 df <- tibble(file.name = file.names) %>%
   mutate(colony_id = gsub("_.*", "", file.name),                              # Get colony_id from filename
          info = map(colony_id, ~filter(metadata, colony_id == .)),           # Get associated sample info
          data0 = map(file.name, ~read_csv(file.path(path.p, .), skip = 1)))   # Get associated O2 data
 
-
-
 # Select only Time, Value, and Temp columns from O2 data
 df <- df %>%
   mutate(data0 = map(data0, ~select(., Time, Value, Temp))) 
+
+####Before running lines below we need to make sure that the start and stop time formats match the raw data time format
+
 
 #Use the time breaks in the sample info to link O2 data with light levels
 df <- df %>%
