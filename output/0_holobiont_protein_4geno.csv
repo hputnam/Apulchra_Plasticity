@@ -1,4 +1,4 @@
-colony_id,site,genotype,prot_ug.cm2,timepoint
+colony_id,site,genotype,holo_prot_ug.cm2,timepoint
 Apul_234,nursery,Genotype6,129.98060291342605,timepoint0
 Apul_237,nursery,Genotype15,294.30097764483935,timepoint0
 Apul_243,nursery,Genotype4,168.3885311855812,timepoint0
