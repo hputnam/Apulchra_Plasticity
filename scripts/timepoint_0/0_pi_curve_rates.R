@@ -22,7 +22,7 @@ library(future)
 library(furrr)
 
 #Set Working Directory
-#setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
+setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
 
 path.p <- "data/timepoint_0/0_pi_curves" #the location of all your respirometry files 
 
