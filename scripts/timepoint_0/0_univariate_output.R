@@ -2,6 +2,11 @@
 library(tidyverse)
 library(ggpubr)
 library(showtext)
+library(dplyr)
+
+#Set working directory
+setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
+
 
 #All saved Figures composed into one figure
 chla <- read.csv("output/0_chlorophylla.csv")
@@ -221,7 +226,7 @@ geno <- full_join(geno, chlc)
 
 geno <- full_join(geno, holo_prot)
 
-geno <- full_join(geno, host_prot)
+geno <- left_join(geno, host_prot) #absorbing the values from just holo_prot since they have the same column name
 
 geno_metadata <- full_join(geno, sym_counts)
 
@@ -259,39 +264,30 @@ timeseries_data <- timeseries_data %>%
 
 Apul_Plast_Metadata <- Apul_Plast_Metadata %>%
   rbind(geno_metadata, timeseries_data) %>%
+  distinct() %>% #removing duplicate data
   write_csv(., path = "data/complete_timeseries_data.csv")
 
 
 ####UNIVARIATE Figures and Analysis ---- NOT WORKING
 library(RColorBrewer)
 #Plot Biomass
-ggplot(Apul_Plast_Metadata, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
-  geom_boxplot() +
-  geom_point(fill = timepoint,pch = 21, size=2, position = position_jitterdodge(0.2)) + 
-  #scale_fill_manual(values = display.brewer.pal(3,"YlGnBu"), limits=c("October 2019", "January 2020", "November 2020"))+
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
-  labs(fill = "Month") +
-  xlab("Site") + 
-  ylab(expression(bold(paste("Holobiont Biomass (mg/cm2)"))))+
-  theme_classic() + 
-  theme(
-    legend.title=element_text(face="bold", size=14),
-    legend.text=element_text(size=14),
-    axis.title=element_text(face="bold", size=14),
-    axis.text=element_text(size=10, color="black"), 
-    strip.text.x=element_text(face="italic", size=14)
-  )
 
+#Subset full data set for just biomass data
 timeseries_biomass <- Apul_Plast_Metadata %>%
   select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2)
 
+#Reorder data from beginning to try to get them all in a row at least:
+timeseries_biomass$site_code <- factor(timeseries_biomass$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) #%>%
+timeseries_biomass$Genotype <- factor(timeseries_biomass$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+
+#Make Boxplot - not all of this works so far
 ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
-  geom_boxplot() +
-  geom_point(aes(shape = Genotype), size=2, position = position_jitterdodge(0.2), labels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) +
+  geom_boxplot(outlier.size = 0) +
+  geom_point(aes(shape = Genotype), size=2, position = position_jitterdodge(0.2)) +
   scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
                             "Manava High" = "Manava \nHigh"))+
-  labs(fill = "Month", labels = c("October 2019", "January 2020", "November 2020")) +
+  labs(fill = "Month") +
+  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Holobiont Biomass (mg/cm2)"))))+
   theme_classic() + 
@@ -305,4 +301,6 @@ ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint,
 
 ggplot(Apul_Plast_Metadata, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint)) +
   geom_boxplot() +
-  geom_point(aes(shape = Genotype), size=2, position = position_jitterdodge(0.2))
+  geom_point(aes(shape = Genotype), size=2, position = position_jitterdodge(0.2)) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
+                            "Manava High" = "Manava \nHigh"), limits = c("Nursery", "Mahana \nLow", "Hilton \nMedium", "Manava \High"))
