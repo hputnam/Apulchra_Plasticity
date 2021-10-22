@@ -9,23 +9,51 @@ setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
 
 
 #All saved Figures composed into one figure
+
+#chl a per frag
 chla <- read.csv("output/0_chlorophylla.csv")
 chla$variable <- colnames(chla[3])
 colnames(chla)[3] <- "value"
 
+#chl a per cell - open and merge all the output data to get CHL a and c2 per cell
+ChlorA <- read.csv("output/0_chlorophylla.csv")
+ChlorC <- read.csv("output/0_chlorophyllc.csv")
+Sym_Density <- read.csv("output/0_sym_counts.csv")
 
+
+TP0_final_data <- full_join(ChlorA, ChlorC)
+TP0_final_data <- full_join(TP0_final_data, Sym_Density)
+
+Chl_per_cell <- TP0_final_data %>%
+  mutate(chla.ug.cell = TP0_final_data$chla.ug.cm2 / TP0_final_data$cells.cm2) %>%
+  mutate(chlc2.ug.cell = TP0_final_data$chlc2.ug.cm2/ TP0_final_data$cells.cm2) %>%
+  write.csv("output/chl_per_cell_TP0.csv")
+
+#pulling out only the values needed to get chl a per cell values
+chla_ug.cell <- read.csv("output/chl_per_cell_TP0.csv")
+chla_ug.cell$variable <- colnames(chla_ug.cell[8])
+colnames(chla_ug.cell)[8] <- "value"  
+
+chla_ug.cell <- select(chla_ug.cell, colony_id, site, value, timepoint, variable)
+
+#chl c2 per cell values
+chlc2_ug.cell <- read.csv("output/chl_per_cell_TP0.csv")
+chlc2_ug.cell$variable <- colnames(chlc2_ug.cell[9])
+colnames(chlc2_ug.cell)[9] <- "value"  
+
+chlc2_ug.cell <- select(chlc2_ug.cell, colony_id, site, value, timepoint, variable)
+
+#Chl C per fragment
 chlc2 <- read.csv("output/0_chlorophyllc.csv")
 chlc2$variable <- colnames(chlc2[3])
 colnames(chlc2)[3] <- "value"
-#CHL C stats
-model3 <- aov(log10(chlc2.ug.cm2) ~ site, data = chl_data)
-anova(model3)
-TukeyHSD(model3)
 
+#Holobiont Protein
 prot.holo <- read.csv("output/0_holobiont_protein.csv")
 prot.holo$variable <- colnames(prot.holo[3])
 colnames(prot.holo)[3] <- "value"
 
+#Host Protein
 prot.host <- read.csv("output/0_host_protein.csv")
 prot.host$variable <- colnames(prot.host[3])
 colnames(prot.host)[3] <- "value"
@@ -41,22 +69,42 @@ colnames(cell.dens)[3] <- "value"
 # Coral sample metadata
 metadata <- read_csv("metadata/coral_metadata.csv") 
 
-Data <- rbind(prot.holo, prot.host, afdw, cell.dens,chla,chlc2)
+Data <- rbind(prot.holo, prot.host, afdw, cell.dens, chla_ug.cell, chlc2_ug.cell, chla, chlc2) #add 
 
-Uni.Fig <- Data %>%
-  ggplot(aes(x = site, y = value, color = site)) +
-  labs(x = "Site", color = "Site") +
-  facet_wrap(vars(variable), scales = "free_y") +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Uni.Fig
+
+#Creating labels/titles for the facets
+variable_titles <- c(
+  'prot_ug.cm2' = "Holobiont Protein (ug/cm2)",
+  'avg_prot_ug.cm2' = "Host Protein (ug/cm2)",
+  'AFDW.mg.cm2' = "Ash Free Dry Weight (mg/cm2)",
+  'cells.cm2' = "Symbiont Density (cells/cm2)",
+  'chla.ug.cell' = "Chl A per Symb. (ug/cells)",
+  'chlc2.ug.cell' = "Chl C per Symb. (ug/cm2)",
+  'chla.ug.cm2' = "Chl A per Frag (ug/cm2)",
+  'chlc2.ug.cm2' = "Chl C per Frag (ug/cm2)"
+)
+names(variable_titles)
+
+#Try running in Fig facet_wrap() at the end to try to get to work
+labeller = labeller(variable = variable_titles) #to insert into figure provided it actually works
+
+
+
+#Faceted figure for all univariate responses at TP0
+#Uni.Fig <- Data %>%
+  #ggplot(aes(x = site, y = value, color = site)) +
+  #labs(x = "Site", color = "Site") +
+  #facet_wrap(vars(variable), scales = "free_y") +
+  #geom_jitter(width = 0.1) +                                            # Plot all points
+  #stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               #geom = "errorbar", color = "black", width = 0.5) +
+  #stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+#Uni.Fig
 
 data_new <- Data                              # Replicate data
 data_new$group <- factor(data_new$variable,      # Reordering group factor levels
-                         levels = c("AFDW.mg.cm2", "prot_ug.cm2", "avg_prot_ug.cm2",
-                                    "cells.cm2","chla.ug.cm2","chlc2.ug.cm2"))
+                         levels = c("AFDW.mg.cm2", "prot_ug.cm2", "avg_prot_ug.cm2","cells.cm2", 
+                                    "chla.ug.cell", "chlc2.ug.cell", "chla.ug.cm2","chlc2.ug.cm2"))  
 
 unique(Data$variable)
 
@@ -71,7 +119,7 @@ Uni.Fig <- data_new %>%
 Uni.Fig
 
 
-ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig, width=10, height=8)
+ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig, width=12, height=12)
 
 
 #_________________________________________________________________________________________________________
