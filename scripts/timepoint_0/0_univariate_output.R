@@ -91,15 +91,15 @@ labeller = labeller(variable = variable_titles) #to insert into figure provided 
 
 
 #Faceted figure for all univariate responses at TP0
-#Uni.Fig <- Data %>%
-  #ggplot(aes(x = site, y = value, color = site)) +
-  #labs(x = "Site", color = "Site") +
-  #facet_wrap(vars(variable), scales = "free_y") +
-  #geom_jitter(width = 0.1) +                                            # Plot all points
-  #stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               #geom = "errorbar", color = "black", width = 0.5) +
-  #stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-#Uni.Fig
+Uni.Fig <- Data %>%
+ggplot(aes(x = site, y = value, color = site)) +
+labs(x = "Site", color = "Site") +
+facet_wrap(vars(variable), scales = "free_y") +
+geom_jitter(width = 0.1) +                                            # Plot all points
+stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+geom = "errorbar", color = "black", width = 0.5) +
+stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+Uni.Fig
 
 data_new <- Data                              # Replicate data
 data_new$group <- factor(data_new$variable,      # Reordering group factor levels
@@ -108,7 +108,7 @@ data_new$group <- factor(data_new$variable,      # Reordering group factor level
 
 unique(Data$variable)
 
-Uni.Fig <- data_new %>%
+Uni.Fig2 <- data_new %>%
   ggplot(aes(x = site, y = value, color = site)) +
   labs(x = "Site", color = "Site") +
   facet_wrap(vars(group), scales = "free_y") +
@@ -116,135 +116,18 @@ Uni.Fig <- data_new %>%
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
   stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Uni.Fig
+Uni.Fig2
 
 
-ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig, width=12, height=12)
-
-
-#_________________________________________________________________________________________________________
-## TO concatonate the output of all the ANOVA with corresponding TukeyHSD data analyses for each univariate metric
-#Table of UNIVARIATE RESPONSEs ANOVA and HSD Results
-#ORDER to Cat Scripts in: 
-  #1) Chl a
-  #2) chl c 
-  #3) Sym Counts
-  #4) Host Protein
-  #5) Holobiont Protein
-  #6) AFDW
-
-# Creating the Title of the New File
-cat("Table_TP0_Univariates.vs.Site_ANOVA_HSD\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt")
-
-# add ANOVA in CHL A data
-cat("A) ANOVA results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(chla_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in CHL A data
-cat("A) TukeyHSD results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(chla_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-
-#add ANOVA in CHLC data
-cat("B) ANOVA results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(chlc2_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-#add TukeyHSD in CHLC data
-cat("B) TukeyHSD results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(chlc2_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-
-# add SYM COUNTS
-cat("C) ANOVA results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(sym.counts_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-
-# add TukeyHSD in SYM COUNTS
-cat("C) TukeyHSD results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(sym.counts_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add ANOVA HOST PROTEIN
-cat("D) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in HOST PROTEIN
-cat("D) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add HOLOBIONT PROTEIN
-cat("E) ANOVA results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(holo.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in HOLOBIONT PROTEIN
-cat("E) TukeyHSD results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(holo.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add ANOVA in AFDW
-cat("F) ANOVA results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(host.prot_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in AFDW
-cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-
-#_________________________________________________________________________________________________________
-
-#Table of UNIVARIATE RESPONSEs (TUKEYHSD Results)
-
-# Creating the Title of the New File
-cat("Table_TP0_Univariates.vs.Site_TUKEYHSD\n\n", file = "output/Table_TP0_Univariates.vs.Site_TUKEYHSD.txt")
-
-# add TukeyHSD in CHL A data
-cat("A) TukeyHSD results of Chl a (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(chla_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-#add TukeyHSD in CHLC data
-cat("B) TukeyHSD results of Chl c (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(chlc2_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in SYM COUNTS
-cat("C) TukeyHSD results of Sym.Counts (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(sym.counts_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-
-# add TukeyHSD in HOST PROTEIN
-cat("D) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in HOLOBIONT PROTEIN
-cat("E) TukeyHSD results of Holobiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(holo.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-# add TukeyHSD in AFDW
-cat("F) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(host.prot_tkyhsd_res, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig2, width=12, height=12)
 
 #______________________________________________________________________________________________
 ## METADATA FILE CREATION
 #Creating Metadata of all metrics from TP0 for the 4 genotypes going to be compared with the rest of the timeseries
 
 #read in all files to full join
-path.p <- "output" #the location of all your respirometry files 
-file.names <- list.files(path = path.p, pattern = "*4geno.csv")  # list all csv file names in the folder
+#path.p <- "output" #the location of all your respirometry files 
+#file.names <- list.files(path = path.p, pattern = "*4geno.csv")  # list all csv file names in the folder
 
 #Couldn't get the more efficient coding to work well...so I manually did it
 #df <- path.p %>%
@@ -307,14 +190,16 @@ timeseries_data <- read.csv("data/data_jan_nov_SA.csv")
 
 
 timeseries_data <- timeseries_data %>%
-  mutate(AFDW.mg.cm2 = timeseries_data$Host_AFDW.mg.cm2 + timeseries_data$Sym_AFDW.mg.cm2) %>%
-  mutate(colony_id = ï..colony_id) %>%
+  mutate(AFDW.mg.cm2 = Host_AFDW.mg.cm2 + Sym_AFDW.mg.cm2) %>%
+  #mutate(colony_id = ?..colony_id) %>%
   select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
 
 Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data) #STILL NEED TO ADD Host and Holobiont Protein to it
 
+Apul_Plast_Metadata$group <- paste0(Apul_Plast_Metadata$Genotype,Apul_Plast_Metadata$timepoint, Apul_Plast_Metadata$site_code)
+
 Apul_Plast_Metadata <- Apul_Plast_Metadata %>%
-  distinct() %>% #removing duplicate data
+  distinct(group, .keep_all = TRUE) %>% #removing duplicate data
   write_csv(path = "data/complete_timeseries_data.csv")
 
 
@@ -340,6 +225,7 @@ biomass_fig <- ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fi
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Holobiont Biomass (mg/cm2)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
   theme_classic() + 
   theme(
     legend.title=element_text(face="bold", size=12),
@@ -371,6 +257,7 @@ chla_ug.cm2_fig <- ggplot(timeseries_chla_cm2, aes(x = site_code, y = chla.ug.cm
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Chlorophyll A per Frag (ug/cm2)")))) +
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
   ylim(0, 4) +
   theme_classic() + 
   theme(
@@ -401,6 +288,7 @@ chlc2_ug.cm2_fig <- ggplot(timeseries_chlc2_cm2, aes(x = site_code, y = chlc2.ug
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Chlorophyll C per Frag (ug/cm2)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
   ylim(0, 4) +
   theme_classic() + 
   theme(
@@ -433,6 +321,7 @@ chla_cells.cm2_fig <- ggplot(timeseries_chla_cells, aes(x = site_code, y = chla.
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Chlorophyll A per Sym (ug/cells)")))) +
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
   ylim(0.000000e-06, 6.500000e-06) +
   theme_classic() + 
   theme(
@@ -464,6 +353,7 @@ chlc2_cells.cm2_fig <- ggplot(timeseries_chlc2_cells, aes(x = site_code, y = chl
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Chlorophyll C per Sym (ug/cells)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
   ylim(0.000000e-06, 6.500000e-06) +
   theme_classic() + 
   theme(
@@ -496,6 +386,7 @@ sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site_code, y = cells.cm2
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Symbiont Density (cells/cm2)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
   theme_classic() + 
   theme(
     legend.title=element_text(face="bold", size=12),
@@ -513,4 +404,14 @@ ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=8)
 
 Fig
 
+colnames(Apul_Plast_Metadata)
+
+fixed_2way <- aov(AFDW.mg.cm2 ~site_code*timepoint, Apul_Plast_Metadata)
+summary(fixed_2way)
+
+
+
+library(lme4)
+mixed_2way <- lmer(AFDW.mg.cm2 ~site_code*timepoint + (1 | Genotype), Apul_Plast_Metadata)
+summary(mixed_2way)
 
