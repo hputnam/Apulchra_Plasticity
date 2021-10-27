@@ -107,11 +107,20 @@ qqline(plast.mod$residuals)
 pj <- position_jitterdodge(jitter.width=0.05, seed=9,
                            jitter.height = 0,
                            dodge.width = 0.75)
+
+#create group mean dataset 
+gd <- Plast.Data %>%
+  group_by(site, timepoint)%>%
+  summarise(mean=mean(Distance))
+
+
 RNorms <- Plast.Data %>%
 ggplot(aes(x=timepoint, y=Distance, fill=site)) +
   geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
   lemon::geom_pointpath(aes(colour=site, shape=Genotype,group=interaction(Genotype,site)),
                         position = pj, alpha=0.4)+
+  geom_point(aes(colour=site, x=timepoint, y=mean), data=gd)+
+  geom_line(aes(colour=site, group=site, x=timepoint, y=mean), data=gd, size=1, alpha=1)+
   theme_classic() 
 
 RNorm<-Plasticity <- ggarrange(RNorms,  common.legend = F)
