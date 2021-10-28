@@ -16,6 +16,8 @@ holo_prot_TP0 <- read.csv("output/0_holobiont_protein.csv")
 host_prot_TP0 <- read.csv("output/0_host_protein.csv")
 sym_counts_TP0 <- read.csv("output/0_sym_counts.csv")
 
+#need to do for AQY, Am and Rd (final of all metrics)
+
 #All the individual merges of original TP0 files
 TP0 <- full_join(biomass_TP0, chla_TP0)
 
@@ -135,6 +137,15 @@ TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0,Sym_Prot_TP0, sym_dens_TP0,Tot_CHL.c
 
 ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=12, height=12)
 
+#STATS on all
+model1 <- aov(AFDW.mg.cm2 ~ site, TP0_metadata) #save model for biomass
+model2 <- aov(host_prot_ug.cm2 ~ site, TP0_metadata) #save model for Host Prot
+model3 <- aov(sym_prot_ug.cm2 ~ site, TP0_metadata) #save model for Sym Prot
+model4 <- aov(cells.cm2 ~ site, TP0_metadata) #save model for Sym Density
+model5 <- aov(total_chl.ug.cm2 ~ site, TP0_metadata) #save model for Total Chl/cell
+model6 <- aov(total_chl.ug.cell ~ site, TP0_metadata) #save model for Total Chl/cm2
+
+#ANOVA on all of them with TukeyHSD Posthoc tests
 
 #______________________________________________________________________________________________
 #CREATING TIMESERIES METADATA AND FIGS
