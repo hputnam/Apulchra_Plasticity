@@ -7,140 +7,140 @@ library(dplyr)
 #Set working directory
 setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
 
+####NURSERY VS WILD SITES TP0 ____________________________________________________________
+#reading in all data files for TP0 (not filtered for genotypes)
+biomass_TP0 <- read.csv("output/0_biomass.csv")
+chla_TP0 <- read.csv("output/0_chlorophylla.csv")
+chlc_TP0 <- read.csv("output/0_chlorophyllc.csv")
+holo_prot_TP0 <- read.csv("output/0_holobiont_protein.csv")
+host_prot_TP0 <- read.csv("output/0_host_protein.csv")
+sym_counts_TP0 <- read.csv("output/0_sym_counts.csv")
 
-#All saved Figures composed into one figure
+#All the individual merges of original TP0 files
+TP0 <- full_join(biomass_TP0, chla_TP0)
 
-#chl a per frag
-chla <- read.csv("output/0_chlorophylla.csv")
-chla$variable <- colnames(chla[3])
-colnames(chla)[3] <- "value"
+TP0 <- full_join(TP0, chlc_TP0)
 
-#chl a per cell - open and merge all the output data to get CHL a and c2 per cell
-ChlorA <- read.csv("output/0_chlorophylla.csv")
-ChlorC <- read.csv("output/0_chlorophyllc.csv")
-Sym_Density <- read.csv("output/0_sym_counts.csv")
+TP0 <- full_join(TP0, holo_prot_TP0)
 
+TP0 <- left_join(TP0, host_prot_TP0) #absorbing the values from just holo_prot since they have the same column name
 
-TP0_final_data <- full_join(ChlorA, ChlorC)
-TP0_final_data <- full_join(TP0_final_data, Sym_Density)
+TP0_metadata <- full_join(TP0, sym_counts_TP0)
 
-Chl_per_cell <- TP0_final_data %>%
-  mutate(chla.ug.cell = TP0_final_data$chla.ug.cm2 / TP0_final_data$cells.cm2) %>%
-  mutate(chlc2.ug.cell = TP0_final_data$chlc2.ug.cm2/ TP0_final_data$cells.cm2) %>%
-  write.csv("output/chl_per_cell_TP0.csv")
+#Creating Chl A and C columns per cell as well as Total CHL columns
+TP0_metadata <- TP0_metadata %>%
+  mutate(chla.ug.cell = TP0_metadata$chla.ug.cm2 / TP0_metadata$cells.cm2)  #chla per symbiont cell
 
-#pulling out only the values needed to get chl a per cell values
-chla_ug.cell <- read.csv("output/chl_per_cell_TP0.csv")
-chla_ug.cell$variable <- colnames(chla_ug.cell[8])
-colnames(chla_ug.cell)[8] <- "value"  
+TP0_metadata <- TP0_metadata %>%
+  mutate(chlc2.ug.cell = TP0_metadata$chlc2.ug.cm2/ TP0_metadata$cells.cm2) #chlc per symbiont cell
 
-chla_ug.cell <- select(chla_ug.cell, colony_id, site, value, timepoint, variable)
+TP0_metadata <- TP0_metadata %>%
+  mutate(total_chl.ug.cm2 = TP0_metadata$chla.ug.cm2 + TP0_metadata$chlc2.ug.cm2) #total chlorophyll per cm2 of frag
 
-#chl c2 per cell values
-chlc2_ug.cell <- read.csv("output/chl_per_cell_TP0.csv")
-chlc2_ug.cell$variable <- colnames(chlc2_ug.cell[9])
-colnames(chlc2_ug.cell)[9] <- "value"  
+TP0_metadata <- TP0_metadata %>%
+  mutate(total_chl.ug.cell = TP0_metadata$chla.ug.cell + TP0_metadata$chlc2.ug.cell)  #total chlorophyll per sym cell 
 
-chlc2_ug.cell <- select(chlc2_ug.cell, colony_id, site, value, timepoint, variable)
+TP0_metadata <- TP0_metadata %>%
+  mutate(holo_prot_ug.cm2 = prot_ug.cm2) #renaming to holobiont prot column
 
-#Chl C per fragment
-chlc2 <- read.csv("output/0_chlorophyllc.csv")
-chlc2$variable <- colnames(chlc2[3])
-colnames(chlc2)[3] <- "value"
+TP0_metadata <- TP0_metadata %>%
+  mutate(host_prot_ug.cm2 = avg_prot_ug.cm2)  #renaming to host prot column
 
-#Holobiont Protein
-prot.holo <- read.csv("output/0_holobiont_protein.csv")
-prot.holo$variable <- colnames(prot.holo[3])
-colnames(prot.holo)[3] <- "value"
+TP0_metadata <- TP0_metadata %>%
+  mutate(sym_prot_ug.cm2 = TP0_metadata$holo_prot_ug.cm2 - TP0_metadata$host_prot_ug.cm2) #calculating sym prot
 
-#Host Protein
-prot.host <- read.csv("output/0_host_protein.csv")
-prot.host$variable <- colnames(prot.host[3])
-colnames(prot.host)[3] <- "value"
-
-afdw <- read.csv("output/0_biomass_output.csv")
-afdw$variable <- colnames(afdw[3])
-colnames(afdw)[3] <- "value"
-
-cell.dens <- read.csv("output/0_sym_counts.csv")
-cell.dens$variable <- colnames(cell.dens[3])
-colnames(cell.dens)[3] <- "value"
-
-# Coral sample metadata
-metadata <- read_csv("metadata/coral_metadata.csv") 
-
-Data <- rbind(prot.holo, prot.host, afdw, cell.dens, chla_ug.cell, chlc2_ug.cell, chla, chlc2) #add 
-
-
-#Creating labels/titles for the facets
-variable_titles <- c(
-  'prot_ug.cm2' = "Holobiont Protein (ug/cm2)",
-  'avg_prot_ug.cm2' = "Host Protein (ug/cm2)",
-  'AFDW.mg.cm2' = "Ash Free Dry Weight (mg/cm2)",
-  'cells.cm2' = "Symbiont Density (cells/cm2)",
-  'chla.ug.cell' = "Chl A per Symb. (ug/cells)",
-  'chlc2.ug.cell' = "Chl C per Symb. (ug/cm2)",
-  'chla.ug.cm2' = "Chl A per Frag (ug/cm2)",
-  'chlc2.ug.cm2' = "Chl C per Frag (ug/cm2)"
-)
-names(variable_titles)
-
-#Try running in Fig facet_wrap() at the end to try to get to work
-labeller = labeller(variable = variable_titles) #to insert into figure provided it actually works
-
-
-
-#Faceted figure for all univariate responses at TP0
-Uni.Fig <- Data %>%
-ggplot(aes(x = site, y = value, color = site)) +
-labs(x = "Site", color = "Site") +
-facet_wrap(vars(variable), scales = "free_y") +
-geom_jitter(width = 0.1) +                                            # Plot all points
-stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-geom = "errorbar", color = "black", width = 0.5) +
-stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Uni.Fig
-
-data_new <- Data                              # Replicate data
-data_new$group <- factor(data_new$variable,      # Reordering group factor levels
-                         levels = c("AFDW.mg.cm2", "prot_ug.cm2", "avg_prot_ug.cm2","cells.cm2", 
-                                    "chla.ug.cell", "chlc2.ug.cell", "chla.ug.cm2","chlc2.ug.cm2"))  
-
-unique(Data$variable)
-
-Uni.Fig2 <- data_new %>%
-  ggplot(aes(x = site, y = value, color = site)) +
-  labs(x = "Site", color = "Site") +
-  facet_wrap(vars(group), scales = "free_y") +
+TP0_metadata <- TP0_metadata %>%
+  select(colony_id, site, timepoint, AFDW.mg.cm2, host_prot_ug.cm2, sym_prot_ug.cm2, total_chl.ug.cm2, total_chl.ug.cell, cells.cm2) #%>% #selecting the six metrics wanting to output
+  
+TP0_metadata <- TP0_metadata %>% #writing output of metadata for TP0 (all nursery - n=10 and wild sites n=3 per site)
+  write.csv("output/TP0_metadata")
+  
+#Individually create plots and save them before compiling into one large output plot
+#biomass fig
+AFDW_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = AFDW.mg.cm2, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Ash Free Dry Weight (mg/cm2)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
   stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Uni.Fig2
+AFDW_TP0
+
+#Host Protein fig
+Host_Prot_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = host_prot_ug.cm2, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Host Protein (ug/cm2)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+Host_Prot_TP0  
+
+#Sym Protein fig
+Sym_Prot_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = sym_prot_ug.cm2, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Symbiont Protein (ug/cm2)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+Sym_Prot_TP0
+
+#Total CHL per cm2 fig
+Tot_CHL.cm2_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = total_chl.ug.cm2, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Total Chlorophyll per Fragment (ug/cm2)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+Tot_CHL.cm2_TP0
+
+#Total CHL per Symbiont fig
+Tot_CHL.cell_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = total_chl.ug.cell, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Total Chlorophyll per Symbiont (ug/cell)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+Tot_CHL.cell_TP0
+
+#Sym Density fig
+sym_dens_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = cells.cm2, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  scale_y_continuous(labels = scales::scientific) +
+  ggtitle("Symbiont Density (cells/cm2)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+sym_dens_TP0
 
 
-ggsave("output/TP0_Univariate_Figs.pdf", Uni.Fig2, width=12, height=12)
+#Configuring all the saved figures for TP0 into final stage of itself
+TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0,Sym_Prot_TP0, sym_dens_TP0,Tot_CHL.cell_TP0,Tot_CHL.cm2_TP0, ncol = 3, nrow = 2)
+
+ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=12, height=12)
+
 
 #______________________________________________________________________________________________
+#CREATING TIMESERIES METADATA AND FIGS
 ## METADATA FILE CREATION
 #Creating Metadata of all metrics from TP0 for the 4 genotypes going to be compared with the rest of the timeseries
 
-#read in all files to full join
-#path.p <- "output" #the location of all your respirometry files 
-#file.names <- list.files(path = path.p, pattern = "*4geno.csv")  # list all csv file names in the folder
-
-#Couldn't get the more efficient coding to work well...so I manually did it
-#df <- path.p %>%
-  #list.files(path = ., pattern = "*4geno.csv") %>%
-  #lapply(read_csv) %>% 
-  #bind_rows 
-
-#df <- tibble(file.name = file.names) %>%
-  #mutate(metric = gsub("_.*", "", file.name),
-         #info = map(metric, ~filter(metadata, colony_id == .)),           # Get associated sample info
-         #data0 = map(file.name, ~read_csv(file.path(path.p, .), skip = 1))) %>%
-  #lapply(read_csv) %>% 
- #bind_rows 
 
 #manual way to merge it
 biomass <- read.csv("output/0_biomass_4geno.csv")
