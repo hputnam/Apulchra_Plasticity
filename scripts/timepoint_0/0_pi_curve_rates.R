@@ -40,7 +40,7 @@ run.info <- read_csv(file = "data/timepoint_0/0_pi_curves/0_pi_curves_run_metada
 
 # Join all coral and run metadata
 metadata <- full_join(sample.info, run.info) %>%
-  mutate(Date = as_date(as.character(Date), format = "%Y%m%d", tz = "Tahiti"))
+  mutate(Date = as_date(as.character(Date), format = "%Y%m%d"))
 
 # Select only certain columnns
 metadata <- metadata %>%
@@ -59,8 +59,9 @@ df <- df %>%
   mutate(data0 = map(data0, ~select(., Time, Value, Temp))) 
 
 ####Before running lines below we need to make sure that the start and stop time formats match the raw data time format
+#DONE ON 20211028
 
-
+#BREAK DOWN IS HAPPENING HERE WHERE DATA has no info
 #Use the time breaks in the sample info to link O2 data with light levels
 df <- df %>%
   mutate(intervals = map2(data0, info, function(.x, .y) {
@@ -68,3 +69,26 @@ df <- df %>%
                       labels = as.character(.y$Light_Value)))})) %>%
   mutate(data = map(intervals, ~ unnest(tibble(.), .id = "Light_Value")))
 
+
+### Thin data
+# Set thinning parameter
+thin_par <- 20
+
+# Thin data for all samples
+df <- df %>%
+  mutate(thin_data = map(data, ~ slice(., seq(1, nrow(.), thin_par))))
+
+# Create plots for full dataset and thinned data
+df <- df %>%
+  mutate(data_plot = map2(data, colony_id, ~ ggplot(.x, aes(x = Time, y = Value)) + 
+                            facet_wrap(~ as.numeric(Light_Value), scales = "free") +
+                            geom_point() +
+                            labs(title = .y)),
+         thin_data_plot = map2(thin_data, colony_id, ~ ggplot(.x, aes(x = Time, y = Value)) + 
+                                 facet_wrap(~ as.numeric(Light_Value), scales = "free") +
+                                 geom_point() +
+                                 labs(title = .y)))
+
+# Example of plots
+cowplot::plot_grid(df$data_plot[[1]], df$thin_data_plot[[1]], nrow = 2,
+                   labels = c("Example plot: all data", "Example plot: thinned data"))
