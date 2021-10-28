@@ -119,8 +119,7 @@ holo_prot <- left_join(holo_prot, metadata) %>%
 
 #filtering out NA values and other coral species
 holo_prot <- holo_prot %>% 
-  filter(species == "Acropora") %>%
-  filter(genotype != "NA")
+  filter(species == "Acropora")
   
 #summarizing/averaging by colony_id
 holo_prot <- holo_prot %>% 
