@@ -9,6 +9,7 @@ if (!require("tidyverse")) install.packages("tidyverse")
 if (!require("lubridate")) install.packages("lubridate")
 if (!require("cowplot")) install.packages("cowplot")
 if (!require("LoLinR")) install_github('colin-olito/LoLinR') 
+if (!require("timechange")) install.packages('timechange') 
 
 ## load libraries
 library(devtools)
@@ -16,13 +17,14 @@ library(LoLinR)
 library(tidyverse)
 library(lubridate)
 library(cowplot)
+library(timechange)
 
 ## libraries for parallel processing
 library(future)
 library(furrr)
 
 #Set Working Directory
-setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
+#setwd("C:/Users/Dennis/Documents/Github/Apulchra_Plasticity")
 
 path.p <- "data/timepoint_0/0_pi_curves" #the location of all your respirometry files 
 
@@ -40,12 +42,21 @@ run.info <- read_csv(file = "data/timepoint_0/0_pi_curves/0_pi_curves_run_metada
 
 # Join all coral and run metadata
 metadata <- full_join(sample.info, run.info) %>%
-  mutate(Date = as_date(as.character(Date), format = "%Y%m%d"))
+  mutate(Date = lubridate::as_date(as.character(Date), format = "%Y%m%d"))
 
 # Select only certain columnns
 metadata <- metadata %>%
   select(colony_id, Run, Chamber.Vol.L, Date, Start.time, Stop.time, Light_Value)
 
+#we have a 7 hour time difference between Moorea time zone (notebook and metadata start and stop times) and the computer pi curve data (computer was likely in eastern time zone). Here we need to correct for the time difference by adding 7 hours to the metadata file  
+
+metadata <- metadata %>%
+  mutate(Start.time = strptime(Start.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
+  mutate(New.start.time = timechange::time_force_tz(Start.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
+  mutate(New.start.time = format(as.POSIXlt(New.start.time), format = "%H:%M:%S"))%>%
+  mutate(Stop.time = strptime(Stop.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
+  mutate(New.stop.time = timechange::time_force_tz(Stop.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
+  mutate(New.stop.time = format(as.POSIXlt(New.stop.time), format = "%H:%M:%S"))
 
 # Read in all data files - 
 #fixed this line of code by deleting column name artifacts in data sheets
@@ -63,9 +74,11 @@ df <- df %>%
 
 #BREAK DOWN IS HAPPENING HERE WHERE DATA has no info
 #Use the time breaks in the sample info to link O2 data with light levels
+
+#Fixed time issue, now we need to figure out why there is an "unexpected bracket"
 df <- df %>%
   mutate(intervals = map2(data0, info, function(.x, .y) {
-    split(.x, f = cut(as.numeric(.x$Time), breaks = as.numeric(c(.y$Start.time, last(.y$Stop.time))),
+    split(.x, f = cut(as.numeric(.x$Time), breaks = as.numeric(c(.y$New.start.time, last(.y$New.stop.time))),
                       labels = as.character(.y$Light_Value)))})) %>%
   mutate(data = map(intervals, ~ unnest(tibble(.), .id = "Light_Value")))
 
