@@ -296,7 +296,7 @@ timeseries_data <- read.csv("data/data_jan_nov_SA.csv")
 
 timeseries_data <- timeseries_data %>%
   mutate(AFDW.mg.cm2 = Host_AFDW.mg.cm2 + Sym_AFDW.mg.cm2) %>%
-  #mutate(colony_id = ?..colony_id) %>%
+  mutate(colony_id = ï..colony_id) %>%
   select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
 
 Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data) #STILL NEED TO ADD Host and Holobiont Protein to it
