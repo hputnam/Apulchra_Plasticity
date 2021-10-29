@@ -59,16 +59,21 @@ TP0_metadata <- TP0_metadata %>% #writing output of metadata for TP0 (all nurser
   
 #Individually create plots and save them before compiling into one large output plot
 #biomass fig
+
+#Load TukeySignicance Letters FUnction
+
+
 AFDW_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = AFDW.mg.cm2, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
   ggtitle("Ash Free Dry Weight (mg/cm2)") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
+  geom_jitter(width = 0.1) + # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
   stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
 AFDW_TP0
+
 
 #Host Protein fig
 Host_Prot_TP0 <- TP0_metadata %>%
@@ -76,7 +81,7 @@ Host_Prot_TP0 <- TP0_metadata %>%
   labs(x = "Site", y = "", color = "Site") +
   ggtitle("Host Protein (ug/cm2)") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
+  geom_jitter(width = 0.1) + # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
                geom = "errorbar", color = "black", width = 0.5) +
   stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
@@ -138,14 +143,103 @@ TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0,Sym_Prot_TP0, sym_dens_TP0,Tot_CHL.c
 ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=12, height=12)
 
 #STATS on all
-model1 <- aov(AFDW.mg.cm2 ~ site, TP0_metadata) #save model for biomass
-model2 <- aov(host_prot_ug.cm2 ~ site, TP0_metadata) #save model for Host Prot
-model3 <- aov(sym_prot_ug.cm2 ~ site, TP0_metadata) #save model for Sym Prot
-model4 <- aov(cells.cm2 ~ site, TP0_metadata) #save model for Sym Density
-model5 <- aov(total_chl.ug.cm2 ~ site, TP0_metadata) #save model for Total Chl/cell
-model6 <- aov(total_chl.ug.cell ~ site, TP0_metadata) #save model for Total Chl/cm2
+model1 <- aov(log10(AFDW.mg.cm2) ~ site, data = TP0_metadata) #save model for biomass
+model2 <- aov(log10(host_prot_ug.cm2) ~ site, data = TP0_metadata) #save model for Host Prot
+model3 <- aov(log10(sym_prot_ug.cm2) ~ site, data = TP0_metadata) #save model for Sym Prot
+model4 <- aov(log10(cells.cm2) ~ site, data = TP0_metadata) #save model for Sym Density
+model5 <- aov(log10(total_chl.ug.cm2) ~ site, data = TP0_metadata) #save model for Total Chl/cell
+model6 <- aov(log10(total_chl.ug.cell) ~ site, data = TP0_metadata) #save model for Total Chl/cm2
 
 #ANOVA on all of them with TukeyHSD Posthoc tests
+
+#Biomass__________________________________________
+biomass_anova<-anova(model1) #anova for biomass
+biomass_tkyhsd<-TukeyHSD(model1) #posthoc tests within anova for biomass
+
+# Concatenate ANOVA results in txt file (AFDW)
+cat("A) ANOVA results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(biomass_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+# Concatenate TukeyHSD results in txt file (AFDW)
+cat("A) TukeyHSD results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(biomass_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+#Host Protein Stats________________________________
+host_prot_anova<-anova(model2) #anova for biomass
+host_prot_tkyhsd<-TukeyHSD(model2) #posthoc tests within anova for biomass
+
+## Concatenate ANOVA results in txt file (Host Protein)
+cat("B) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host_prot_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Host Protein)
+cat("B) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(host_prot_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+#Sym Protein______________________________________
+sym_prot_anova<-anova(model3) #anova for biomass
+sym_prot_tkyhsd<-TukeyHSD(model3) #posthoc tests within anova for biomass
+
+## Concatenate ANOVA results in txt file (Sym Protein)
+cat("C) ANOVA results of Symbiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym_prot_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Sym Protein)
+cat("C) TukeyHSD results of Symbiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym_prot_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+#Sym Density______________________________________
+sym_dens_anova<-anova(model4) #anova for Sym Density
+sym_dens_tkyhsd<-TukeyHSD(model1) #posthoc tests within anova for Sym Density
+
+## Concatenate ANOVA results in txt file (Sym Density)
+cat("D) ANOVA results of Symbiont Density (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym_dens_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Sym Density)
+cat("D) TukeyHSD results of Symbiont Density (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(sym_dens_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+#Total Chlorophyll per Frag (ug/cm2)_______________
+tot_chl_anova<-anova(model5) #anova for Total Chl
+tot_chl_tkyhsd<-TukeyHSD(model5) #posthoc tests within anova for Total Chl
+
+## Concatenate ANOVA results in txt file (Total CHL per Frag)
+cat("E) ANOVA results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(tot_chl_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Total CHL per Frag)
+cat("E) TukeyHSD results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(tot_chl_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+#Totally Chlorophyll per cell (ug/cells)____________
+tot_chl_per.cell_anova<-anova(model6) #anova for Total Chl per cell
+tot_chl_per.cell_tkyhsd<-TukeyHSD(model6) #posthoc tests within anova for Total Chl per cell
+
+## Concatenate ANOVA results in txt file (Total CHL per cell)
+cat("F) ANOVA results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(tot_chl_per.cell_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Total CHL per cell)
+cat("F) TukeyHSD results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(tot_chl_per.cell_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+myresults <- read.delim("output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt")
 
 #______________________________________________________________________________________________
 #CREATING TIMESERIES METADATA AND FIGS
