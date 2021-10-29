@@ -284,7 +284,7 @@ geno_metadata <- geno_metadata %>%
   mutate(site_code = "Nursery") %>%
   mutate(chla.ug.cell = geno_metadata$chla.ug.cm2 / geno_metadata$cells.cm2) %>%
   mutate(chlc2.ug.cell = geno_metadata$chlc2.ug.cm2/ geno_metadata$cells.cm2) %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, host_prot_ug.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
 
 
 
@@ -297,14 +297,18 @@ timeseries_data <- read.csv("data/data_jan_nov_SA.csv")
 timeseries_data <- timeseries_data %>%
   mutate(AFDW.mg.cm2 = Host_AFDW.mg.cm2 + Sym_AFDW.mg.cm2) %>%
   mutate(colony_id = ï..colony_id) %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+  mutate(host_prot_ug.cm2 = prot_ug.cm2) %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, host_prot_ug.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
 
 Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data) #STILL NEED TO ADD Host and Holobiont Protein to it
 
 Apul_Plast_Metadata$group <- paste0(Apul_Plast_Metadata$Genotype,Apul_Plast_Metadata$timepoint, Apul_Plast_Metadata$site_code)
 
 Apul_Plast_Metadata <- Apul_Plast_Metadata %>%
+  mutate(total_chl.ug.cm2 = Apul_Plast_Metadata$chla.ug.cm2 + Apul_Plast_Metadata$chlc2.ug.cm2) %>%
+  mutate(total_chl.ug.cell = Apul_Plast_Metadata$chla.ug.cell + Apul_Plast_Metadata$chlc2.ug.cell) %>%
   distinct(group, .keep_all = TRUE) %>% #removing duplicate data
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, host_prot_ug.cm2, total_chl.ug.cm2, total_chl.ug.cell, Am, AQY, Rd, cells.cm2, group) %>%
   write_csv(path = "data/complete_timeseries_data.csv")
 
 
@@ -342,18 +346,18 @@ biomass_fig <- ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fi
 
 
 
-####UNIVARIATE Figures and Analysis ---- CHL A (ug/cm2)
-##Plot CHL A (ug/cm2)##
+####UNIVARIATE Figures and Analysis ---- TOTAL CHL (ug/cm2)
+##Plot TOTAL CHL (ug/cm2)##
 
 #Subset full data set for just biomass data
-timeseries_chla_cm2 <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, chla.ug.cm2)
+timeseries_tot_chl_cm2 <- Apul_Plast_Metadata %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, total_chl.ug.cm2)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_chla_cm2$site_code <- factor(timeseries_chla_cm2$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
-timeseries_chla_cm2$Genotype <- factor(timeseries_chla_cm2$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+timeseries_tot_chl_cm2$site_code <- factor(timeseries_tot_chl_cm2$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
+timeseries_tot_chl_cm2$Genotype <- factor(timeseries_tot_chl_cm2$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
-chla_ug.cm2_fig <- ggplot(timeseries_chla_cm2, aes(x = site_code, y = chla.ug.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site_code, y = total_chl.ug.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
   scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
@@ -361,9 +365,9 @@ chla_ug.cm2_fig <- ggplot(timeseries_chla_cm2, aes(x = site_code, y = chla.ug.cm
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
-  ylab(expression(bold(paste("Chlorophyll A per Frag (ug/cm2)")))) +
+  ylab(expression(bold(paste("Total Chlorophyll per Frag (ug/cm2)")))) +
   geom_vline(xintercept = 1.5, linetype = "longdash")+
-  ylim(0, 4) +
+  ylim(0, 8) +
   theme_classic() + 
   theme(
     legend.title=element_text(face="bold", size=12),
@@ -373,18 +377,18 @@ chla_ug.cm2_fig <- ggplot(timeseries_chla_cm2, aes(x = site_code, y = chla.ug.cm
     strip.text.x=element_text(face="italic", size=10)
   )
 
-####UNIVARIATE Figures and Analysis ---- CHL C (ug/cm2)
-##Plot CHL C (ug/cm2)##
+####UNIVARIATE Figures and Analysis ---- Total CHL per Symbiont (ug/cell)
+##Plot CHL per Symbiont (ug/cell)##
 
 #Subset full data set for just biomass data
-timeseries_chlc2_cm2 <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, chlc2.ug.cm2)
+timeseries_tot_chl_cell <- Apul_Plast_Metadata %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, total_chl.ug.cell)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_chlc2_cm2$site_code <- factor(timeseries_chlc2_cm2$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
-timeseries_chlc2_cm2$Genotype <- factor(timeseries_chlc2_cm2$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+timeseries_tot_chl_cell$site_code <- factor(timeseries_tot_chl_cell$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
+timeseries_tot_chl_cell$Genotype <- factor(timeseries_tot_chl_cell$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
-chlc2_ug.cm2_fig <- ggplot(timeseries_chlc2_cm2, aes(x = site_code, y = chlc2.ug.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site_code, y = total_chl.ug.cell, fill = timepoint, group=interaction(site_code,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
   scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
@@ -392,74 +396,9 @@ chlc2_ug.cm2_fig <- ggplot(timeseries_chlc2_cm2, aes(x = site_code, y = chlc2.ug
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
-  ylab(expression(bold(paste("Chlorophyll C per Frag (ug/cm2)"))))+
+  ylab(expression(bold(paste("Total Chlorophyll per Symbiont (ug/cell)"))))+
   geom_vline(xintercept = 1.5, linetype = "longdash")+
-  ylim(0, 4) +
-  theme_classic() + 
-  theme(
-    legend.title=element_text(face="bold", size=12),
-    legend.text=element_text(size=10),
-    axis.title=element_text(face="bold", size=10),
-    axis.text=element_text(size=8, color="black"), 
-    strip.text.x=element_text(face="italic", size=10)
-  )
-
-####UNIVARIATE Figures and Analysis ---- CHL A (ug/cells)
-##Plot CHL A (ug/cells)##
-
-#Subset full data set for just biomass data
-timeseries_chla_cells <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, chla.ug.cell)
-
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_chla_cells$site_code <- factor(timeseries_chla_cells$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
-timeseries_chla_cells$Genotype <- factor(timeseries_chla_cells$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
-library(scales)
-
-chla_cells.cm2_fig <- ggplot(timeseries_chla_cells, aes(x = site_code, y = chla.ug.cell, fill = timepoint, group=interaction(site_code,timepoint))) +
-  geom_boxplot(outlier.size = 0) +
-  geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
-  labs(fill = "Timepoint") +
-  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
-  xlab("Site") + 
-  ylab(expression(bold(paste("Chlorophyll A per Sym (ug/cells)")))) +
-  geom_vline(xintercept = 1.5, linetype = "longdash")+
-  ylim(0.000000e-06, 6.500000e-06) +
-  theme_classic() + 
-  theme(
-    legend.title=element_text(face="bold", size=12),
-    legend.text=element_text(size=10),
-    axis.title=element_text(face="bold", size=10),
-    axis.text=element_text(size=8, color="black"), 
-    strip.text.x=element_text(face="italic", size=10)
-  )
-
-
-####UNIVARIATE Figures and Analysis ---- CHL C (ug/cells)
-##Plot CHL C (ug/cells)##
-
-#Subset full data set for just biomass data
-timeseries_chlc2_cells <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, chlc2.ug.cell)
-
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_chlc2_cells$site_code <- factor(timeseries_chlc2_cells$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
-timeseries_chlc2_cells$Genotype <- factor(timeseries_chlc2_cells$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
-chlc2_cells.cm2_fig <- ggplot(timeseries_chlc2_cells, aes(x = site_code, y = chlc2.ug.cell, fill = timepoint, group=interaction(site_code,timepoint))) +
-  geom_boxplot(outlier.size = 0) +
-  geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
-  labs(fill = "Timepoint") +
-  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
-  xlab("Site") + 
-  ylab(expression(bold(paste("Chlorophyll C per Sym (ug/cells)"))))+
-  geom_vline(xintercept = 1.5, linetype = "longdash")+
-  ylim(0.000000e-06, 6.500000e-06) +
+  #ylim(0, 4) +
   theme_classic() + 
   theme(
     legend.title=element_text(face="bold", size=12),
@@ -471,7 +410,7 @@ chlc2_cells.cm2_fig <- ggplot(timeseries_chlc2_cells, aes(x = site_code, y = chl
 
 
 ####UNIVARIATE Figures and Analysis ---- SYM Density (cells/cm2)
-##Plot CHL C (ug/cells)##
+##Plot Sym Density (cells/cm2)##
 
 #Subset full data set for just biomass data
 timeseries_sym_counts <- Apul_Plast_Metadata %>%
@@ -502,9 +441,41 @@ sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site_code, y = cells.cm2
   )
 
 
+####UNIVARIATE Figures and Analysis ---- Host Prot (ug/cm2)
+##Plot Host Prot (ug/cm2)##
+
+#Subset full data set for just biomass data
+timeseries_host_prot <- Apul_Plast_Metadata %>%
+  select(colony_id, Genotype, timepoint, month, nutrient, site_code, host_prot_ug.cm2)
+
+#Reorder data from beginning to try to get them all in a row at least:
+timeseries_host_prot$site_code <- factor(timeseries_host_prot$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
+timeseries_host_prot$Genotype <- factor(timeseries_host_prot$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+
+host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site_code, y = host_prot_ug.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+  geom_boxplot(outlier.size = 0) +
+  geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
+                            "Manava High" = "Manava \nHigh"))+
+  scale_y_continuous(labels = scales::scientific) +
+  labs(fill = "Timepoint") +
+  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
+  xlab("Site") + 
+  ylab(expression(bold(paste("Host Total Protein (ug/cm2)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
+  theme_classic() + 
+  theme(
+    legend.title=element_text(face="bold", size=12),
+    legend.text=element_text(size=10),
+    axis.title=element_text(face="bold", size=10),
+    axis.text=element_text(size=8, color="black"), 
+    strip.text.x=element_text(face="italic", size=10)
+  )
+
+host_prot_fig
 ###Configure all univariate functions into one major figure
 
-Fig <- ggarrange(biomass_fig, chla_ug.cm2_fig,chlc2_ug.cm2_fig, sym_counts_fig,chla_cells.cm2_fig,chlc2_cells.cm2_fig, ncol = 3, nrow = 2)
+Fig <- ggarrange(biomass_fig, host_prot_fig, sym_counts_fig, tot_chl_cell_fig, tot_chl_cm2_fig, ncol = 3, nrow = 2)
 ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=8)
 
 Fig
