@@ -50,13 +50,13 @@ metadata <- metadata %>%
 
 #we have a 7 hour time difference between Moorea time zone (notebook and metadata start and stop times) and the computer pi curve data (computer was likely in eastern time zone). Here we need to correct for the time difference by adding 7 hours to the metadata file  
 
-metadata <- metadata %>%
-  mutate(Start.time = strptime(Start.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
-  mutate(New.start.time = timechange::time_force_tz(Start.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
-  mutate(New.start.time = format(as.POSIXlt(New.start.time), format = "%H:%M:%S"))%>%
-  mutate(Stop.time = strptime(Stop.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
-  mutate(New.stop.time = timechange::time_force_tz(Stop.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
-  mutate(New.stop.time = format(as.POSIXlt(New.stop.time), format = "%H:%M:%S"))
+# metadata <- metadata %>%
+#   mutate(Start.time = strptime(Start.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
+#   mutate(New.start.time = timechange::time_force_tz(Start.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
+#   mutate(New.start.time = format(as.POSIXlt(New.start.time), format = "%H:%M:%S"))%>%
+#   mutate(Stop.time = strptime(Stop.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
+#   mutate(New.stop.time = timechange::time_force_tz(Stop.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
+#   mutate(New.stop.time = format(as.POSIXlt(New.stop.time), format = "%H:%M:%S"))
 
 # Read in all data files - 
 #fixed this line of code by deleting column name artifacts in data sheets
@@ -78,7 +78,7 @@ df <- df %>%
 #Fixed time issue, now we need to figure out why there is an "unexpected bracket"
 df <- df %>%
   mutate(intervals = map2(data0, info, function(.x, .y) {
-    split(.x, f = cut(as.numeric(.x$Time), breaks = as.numeric(c(.y$New.start.time, last(.y$New.stop.time))),
+    split(.x, f = cut(as.numeric(.x$Time), breaks = as.numeric(c(.y$Start.time, last(.y$Stop.time))),
                       labels = as.character(.y$Light_Value)))})) %>%
   mutate(data = map(intervals, ~ unnest(tibble(.), .id = "Light_Value")))
 
@@ -105,3 +105,108 @@ df <- df %>%
 # Example of plots
 cowplot::plot_grid(df$data_plot[[1]], df$thin_data_plot[[1]], nrow = 2,
                    labels = c("Example plot: all data", "Example plot: thinned data"))
+
+# Fit regressions to each interval for each sample
+
+# Define function for fitting LoLinR regressions to be applied to all intervals for all samples
+fit_reg <- function(df) {
+  rankLocReg(xall = as.numeric(df$Time), yall = df$Value, 
+             alpha = 0.2, method = "pc", verbose = FALSE)
+}
+
+# Setup for parallel processing
+future::plan(multiprocess)
+
+# Map LoLinR function onto all intervals of each sample's thinned dataset
+df <- df %>%
+  mutate(regs = furrr::future_map(thin_data, function(.) {       # future_map executes function in parallel
+    group_by(., Light_Value) %>%
+      do(rankLcRg = fit_reg(.))
+  }))
+
+## Now 'regs' contains the fitted local regressions for each interval of each sample's thinned dataset
+
+# Define function to pull out and plot regression diagnostics
+plot_rankLcRg <- function(colony_id, interval_number) {
+  df %>%
+    filter(colony_id == colony_id) %>%
+    pluck("regs", 1, "rankLcRg", interval_number) %>%
+    plot()
+}
+
+### Extract slope of best regression for each interval for each sample
+
+df.out <- df %>% 
+  unnest(regs) %>%
+  mutate(micromol.L.s = map_dbl(rankLcRg, ~ pluck(., "allRegs", "b1", 1)))
+
+# Adjust by chamber volume and normalize to surface area
+
+### Merge rates with sample info
+pr <- left_join(
+  select(df.out, colony_id, Light_Value, micromol.L.s),
+  distinct(metadata, colony_id, Run, Chamber.Vol.L)
+)
+
+### Correct for chamber volume and blanks
+pr <- pr %>%
+  mutate(micromol.s = micromol.L.s * Chamber.Vol.L)
+
+# Get blank values -- average for each run and light value in case multiple blanks
+blanks <- pr %>%
+  filter(grepl("BLK", colony_id)) %>%
+  group_by(Run, Light_Value) %>%
+  summarise(micromol.s.blank = mean(micromol.s))
+
+# Plot rates vs. irradiance for each sample
+
+ggplot(blanks, aes(x = as.numeric(Light_Value), y = micromol.s.blank)) +
+  geom_point() +
+  facet_wrap(~Run,  ncol = 9)
+
+#### Average all blanks and use that to subtract from all
+# Join blank values with rest of data and subtract values from samples for same run and light value
+pr <- left_join(pr, blanks) %>%
+  mutate(micromol.s.adj = micromol.s - micromol.s.blank) %>%
+  # After correcting for blank values, remove blanks from data
+  filter(!grepl("BLK", colony_id))
+
+# Import surface area data
+sa <- read.csv("output/0_surface_area.csv")
+
+# Join surface area with rest of data
+pr <- left_join(pr, select(sa, colony_id, surface.area.cm2))
+
+# Normalize rates by surface area
+pr <- pr %>%
+  mutate(micromol.cm2.s = micromol.s.adj / surface.area.cm2,
+         micromol.cm2.h = micromol.cm2.s * 3600)
+
+
+# Plot rates vs. irradiance for each sample
+
+ggplot(pr, aes(x = as.numeric(Light_Value), y = micromol.cm2.h)) +
+  geom_point() +
+  facet_wrap(~colony_id, scale = "free_y", ncol = 9)
+
+
+# Write to output file
+#NEED to match other TP0 outputs
+# Select variables to write to file
+pr.out <- pr %>% 
+  select(colony_id, Light_Value, Run, micromol.cm2.s, micromol.cm2.h) %>%
+  mutate(timepoint="timepoint0")
+
+# Write to output file
+write.csv(pr.out, "output/0_pi_curve_rates.csv")
+
+
+
+
+
+
+
+
+
+
+
