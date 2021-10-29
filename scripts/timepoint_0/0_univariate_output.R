@@ -249,42 +249,62 @@ myresults <- read.delim("output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt")
 
 #manual way to merge it
 biomass <- read.csv("output/0_biomass_4geno.csv")
+biomass <- biomass %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
 chla <- read.csv("output/0_chlorophylla_4geno.csv")
+chla <- chla %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
 chlc <- read.csv("output/0_chlorophyllc_4geno.csv")
+chlc <- chlc %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
 holo_prot <- read.csv("output/0_holobiont_protein_4geno.csv")
+holo_prot <- holo_prot %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
 host_prot <- read.csv("output/0_host_protein_4geno.csv")
+host_prot <- host_prot %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
 sym_counts <- read.csv("output/0_sym_counts_4geno.csv")
+sym_counts <- sym_counts %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
+alpha <- read.csv("output/0_alpha_4geno.csv")
+alpha <- alpha %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
+Pmax <- read.csv("output/0_Pmax_4geno.csv")
+Pmax <- Pmax %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
+Rd <- read.csv("output/0_Rd_4geno.csv")
+Rd <- Rd %>% 
+  mutate_at("colony_id", str_replace, "_", "-")
 
 #All the individual merges
 geno <- full_join(biomass, chla)
-
 geno <- full_join(geno, chlc)
-
 geno <- full_join(geno, holo_prot)
-
 geno <- left_join(geno, host_prot) #absorbing the values from just holo_prot since they have the same column name
+geno <- full_join(geno, sym_counts)
+geno <- full_join(geno, alpha)
+geno <- full_join(geno, Pmax)
+geno <- full_join(geno, Rd)
 
-geno_metadata <- full_join(geno, sym_counts)
+
+geno_metadata <- geno
+geno_metadata <- geno_metadata %>% 
+  mutate_at("colony_id", str_replace, "Apul", "ACR")
 
 
-#Converting Apul to ACR to match the timeseries
-geno_metadata [1, 1] <- "ACR-237"
-geno_metadata [2, 1] <- "ACR-234"
-geno_metadata [3, 1] <- "ACR-243"
-geno_metadata [4, 1] <- "ACR-244"
+######
+#START WORKIGN HERE
+#####
 
 #Edit the current metadata sheet to match the current timeseries metadata
 geno_metadata <- geno_metadata %>%
   mutate(Genotype = genotype) %>%
   mutate(month = "19-Oct") %>%
   mutate(nutrient = "NA") %>%
-  mutate(Am = "NA") %>%
-  mutate(AQY = "NA") %>%
-  mutate(Rd = "NA") %>%
   mutate(site_code = "Nursery") %>%
   mutate(chla.ug.cell = geno_metadata$chla.ug.cm2 / geno_metadata$cells.cm2) %>%
   mutate(chlc2.ug.cell = geno_metadata$chlc2.ug.cm2/ geno_metadata$cells.cm2) %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, host_prot_ug.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+  select(colony_id, Genotype, timepoint, month, nutrient, AFDW.mg.cm2, host_prot_ug.cm2, chla.ug.cm2, chlc2.ug.cm2, Pmax, alpha, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
 
 
 

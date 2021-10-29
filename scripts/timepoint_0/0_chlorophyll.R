@@ -96,7 +96,7 @@ metadata <- read.csv("metadata/coral_metadata.csv")
 
 #rename sample_id column because it is having issues
 metadata <- metadata %>%
-  mutate(colony_id = ï..colony_id) %>%
+  mutate(colony_id = ?..colony_id) %>%
   select(colony_id, species, site, genotype, purpose)
   
 
@@ -205,6 +205,12 @@ chlc_4geno <- chl_data %>%
   write_csv(path = "output/0_chlorophyllc_4geno.csv")
 
 
+# ADD TOTAL CHL AND CHL PER CELL
+# chl_tot_4geno <- chl_data %>%
+#   filter(genotype == "Genotype15"| genotype == "Genotype4"| genotype == "Genotype6"|genotype == "Genotype8") %>%
+#   select(colony_id, site, genotype, chlc2.ug.cm2) %>%
+#   mutate(timepoint="timepoint0")%>%
+#   write_csv(path = "output/0_chlorophyllc_4geno.csv")
 
 
 
