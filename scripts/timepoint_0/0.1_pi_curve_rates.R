@@ -48,16 +48,6 @@ metadata <- full_join(sample.info, run.info) %>%
 metadata <- metadata %>%
   select(colony_id, Run, Chamber.Vol.L, Date, Start.time, Stop.time, Light_Value)
 
-#we have a 7 hour time difference between Moorea time zone (notebook and metadata start and stop times) and the computer pi curve data (computer was likely in eastern time zone). Here we need to correct for the time difference by adding 7 hours to the metadata file  
-
-# metadata <- metadata %>%
-#   mutate(Start.time = strptime(Start.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
-#   mutate(New.start.time = timechange::time_force_tz(Start.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
-#   mutate(New.start.time = format(as.POSIXlt(New.start.time), format = "%H:%M:%S"))%>%
-#   mutate(Stop.time = strptime(Stop.time, format="%H:%M:%S", tz="Pacific/Tahiti"))%>%
-#   mutate(New.stop.time = timechange::time_force_tz(Stop.time, tz = "Pacific/Tahiti", tzout="Atlantic/Bermuda"))%>%
-#   mutate(New.stop.time = format(as.POSIXlt(New.stop.time), format = "%H:%M:%S"))
-
 # Read in all data files - 
 #fixed this line of code by deleting column name artifacts in data sheets
 df <- tibble(file.name = file.names) %>%
@@ -69,13 +59,6 @@ df <- tibble(file.name = file.names) %>%
 df <- df %>%
   mutate(data0 = map(data0, ~select(., Time, Value, Temp))) 
 
-####Before running lines below we need to make sure that the start and stop time formats match the raw data time format
-#DONE ON 20211028
-
-#BREAK DOWN IS HAPPENING HERE WHERE DATA has no info
-#Use the time breaks in the sample info to link O2 data with light levels
-
-#Fixed time issue, now we need to figure out why there is an "unexpected bracket"
 df <- df %>%
   mutate(intervals = map2(data0, info, function(.x, .y) {
     split(.x, f = cut(as.numeric(.x$Time), breaks = as.numeric(c(.y$Start.time, last(.y$Stop.time))),
@@ -85,7 +68,7 @@ df <- df %>%
 
 ### Thin data
 # Set thinning parameter
-thin_par <- 20
+thin_par <- 10
 
 # Thin data for all samples
 df <- df %>%
@@ -155,24 +138,26 @@ pr <- pr %>%
 # Get blank values -- average for each run and light value in case multiple blanks
 blanks <- pr %>%
   filter(grepl("BLK", colony_id)) %>%
-  group_by(Run, Light_Value) %>%
-  summarise(micromol.s.blank = mean(micromol.s))
+  group_by(Light_Value) %>%
+  summarise(avgmicromol.s.blank = mean(micromol.s))
 
 # Plot rates vs. irradiance for each sample
 
-ggplot(blanks, aes(x = as.numeric(Light_Value), y = micromol.s.blank)) +
-  geom_point() +
-  facet_wrap(~Run,  ncol = 9)
+ggplot(blanks, aes(x = as.numeric(Light_Value), y = avgmicromol.s.blank)) +
+  geom_point() 
+
 
 #### Average all blanks and use that to subtract from all
 # Join blank values with rest of data and subtract values from samples for same run and light value
 pr <- left_join(pr, blanks) %>%
-  mutate(micromol.s.adj = micromol.s - micromol.s.blank) %>%
+  mutate(micromol.s.adj = micromol.s - avgmicromol.s.blank) %>%
   # After correcting for blank values, remove blanks from data
   filter(!grepl("BLK", colony_id))
 
 # Import surface area data
 sa <- read.csv("output/0_surface_area.csv")
+sa <- sa %>%
+  mutate_at("colony_id", str_replace, "_", "-")
 
 # Join surface area with rest of data
 pr <- left_join(pr, select(sa, colony_id, surface.area.cm2))
@@ -187,11 +172,9 @@ pr <- pr %>%
 
 ggplot(pr, aes(x = as.numeric(Light_Value), y = micromol.cm2.h)) +
   geom_point() +
-  facet_wrap(~colony_id, scale = "free_y", ncol = 9)
+  facet_wrap(~colony_id, scale = "free_y", ncol = 4)
 
 
-# Write to output file
-#NEED to match other TP0 outputs
 # Select variables to write to file
 pr.out <- pr %>% 
   select(colony_id, Light_Value, Run, micromol.cm2.s, micromol.cm2.h) %>%
