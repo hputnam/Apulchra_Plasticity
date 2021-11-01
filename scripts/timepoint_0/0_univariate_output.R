@@ -845,6 +845,7 @@ ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=12)
 
 Fig
 
+####STATS FOR UNIVARIATE TIMESERIES ANALYSIS
 colnames(Apul_Plast_Metadata)
 
 fixed_2way <- aov(AFDW.mg.cm2 ~site_code*timepoint, Apul_Plast_Metadata)
