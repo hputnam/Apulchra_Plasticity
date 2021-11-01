@@ -234,7 +234,7 @@ sym_dens_TP0
 Am_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = Am, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Max Photosynthesis") +
+  ggtitle("Max Photosynthesis (Am)") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -259,7 +259,7 @@ Am_TP0
 AQY_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = AQY, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Max Photosynthetic Rate") +
+  ggtitle("Max Photosynthetic Rate (AQY)") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -285,7 +285,7 @@ AQY_TP0
 Rd_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = Rd, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Respiration Rate") +
+  ggtitle("Respiration Rate (Rd)") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
