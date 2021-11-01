@@ -597,18 +597,17 @@ library(RColorBrewer)
 
 #Subset full data set for just biomass data
 timeseries_biomass <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2)
+  select(Genotype, timepoint, site, AFDW.mg.cm2)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_biomass$site_code <- factor(timeseries_biomass$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) #%>%
 timeseries_biomass$Genotype <- factor(timeseries_biomass$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
 #Make Boxplot - BIOMASS
-biomass_fig <- ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+biomass_fig <- ggplot(timeseries_biomass, aes(x = site, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
@@ -628,25 +627,24 @@ biomass_fig <- ggplot(timeseries_biomass, aes(x = site_code, y = AFDW.mg.cm2, fi
 ####UNIVARIATE Figures and Analysis ---- TOTAL CHL (ug/cm2)
 ##Plot TOTAL CHL (ug/cm2)##
 
-#Subset full data set for just biomass data
+#Subset full data set for just total chlorophyll data
 timeseries_tot_chl_cm2 <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, total_chl.ug.cm2)
+  select(Genotype, timepoint, site, tot_chl.ug.cm2)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_tot_chl_cm2$site_code <- factor(timeseries_tot_chl_cm2$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
 timeseries_tot_chl_cm2$Genotype <- factor(timeseries_tot_chl_cm2$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
-tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site_code, y = total_chl.ug.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site, y = tot_chl.ug.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Total Chlorophyll per Frag (ug/cm2)")))) +
   geom_vline(xintercept = 1.5, linetype = "longdash")+
-  ylim(0, 8) +
+  ylim(0, 6) +
   theme_classic() + 
   theme(
     legend.title=element_text(face="bold", size=12),
@@ -659,19 +657,18 @@ tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site_code, y = total_c
 ####UNIVARIATE Figures and Analysis ---- Total CHL per Symbiont (ug/cell)
 ##Plot CHL per Symbiont (ug/cell)##
 
-#Subset full data set for just biomass data
+#Subset full data set for just total chlorophyll per sym data
 timeseries_tot_chl_cell <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, total_chl.ug.cell)
+  select(Genotype, timepoint, site, tot_chl.ug.cell)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_tot_chl_cell$site_code <- factor(timeseries_tot_chl_cell$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
 timeseries_tot_chl_cell$Genotype <- factor(timeseries_tot_chl_cell$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
-tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site_code, y = total_chl.ug.cell, fill = timepoint, group=interaction(site_code,timepoint))) +
+tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site, y = tot_chl.ug.cell, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
@@ -691,19 +688,18 @@ tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site_code, y = total
 ####UNIVARIATE Figures and Analysis ---- SYM Density (cells/cm2)
 ##Plot Sym Density (cells/cm2)##
 
-#Subset full data set for just biomass data
+#Subset full data set for just Sym Density data
 timeseries_sym_counts <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, cells.cm2)
+  select(Genotype, timepoint, site, cells.cm2)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_sym_counts$site_code <- factor(timeseries_sym_counts$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
 timeseries_sym_counts$Genotype <- factor(timeseries_sym_counts$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
-sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site_code, y = cells.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site, y = cells.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
   scale_y_continuous(labels = scales::scientific) +
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
@@ -723,20 +719,18 @@ sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site_code, y = cells.cm2
 ####UNIVARIATE Figures and Analysis ---- Host Prot (ug/cm2)
 ##Plot Host Prot (ug/cm2)##
 
-#Subset full data set for just biomass data
+#Subset full data set for just Host Protein data
 timeseries_host_prot <- Apul_Plast_Metadata %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, host_prot_ug.cm2)
+  select(Genotype, timepoint, site, host_prot_ug.cm2)
 
 #Reorder data from beginning to try to get them all in a row at least:
-timeseries_host_prot$site_code <- factor(timeseries_host_prot$site_code, levels = c("Nursery", "Mahana Low", "Hilton Medium", "Manava High")) 
 timeseries_host_prot$Genotype <- factor(timeseries_host_prot$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
 
-host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site_code, y = host_prot_ug.cm2, fill = timepoint, group=interaction(site_code,timepoint))) +
+host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site, y = host_prot_ug.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
-  scale_x_discrete(labels=c("Nursery" = "Nursery", "Mahana Low" = "Mahana \nLow", "Hilton Medium" = "Hilton \nMedium",
-                            "Manava High" = "Manava \nHigh"))+
-  scale_y_continuous(labels = scales::scientific) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
   labs(fill = "Timepoint") +
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
@@ -752,10 +746,102 @@ host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site_code, y = host_prot_u
   )
 
 host_prot_fig
+
+####UNIVARIATE Figures and Analysis ---- Max Photosynthesis (Am)
+##Plot Pmax (Am)##
+
+#Subset full data set for just Photosynthesis data (Am)
+timeseries_Am <- Apul_Plast_Metadata %>%
+  select(Genotype, timepoint, site, Am)
+
+#Reorder data from beginning to try to get them all in a row at least:
+timeseries_Am$Genotype <- factor(timeseries_Am$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+
+Am_fig <- ggplot(timeseries_Am, aes(x = site, y = Am, fill = timepoint, group=interaction(site,timepoint))) +
+  geom_boxplot(outlier.size = 0) +
+  geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
+  labs(fill = "Timepoint") +
+  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
+  xlab("Site") + 
+  ylab(expression(bold(paste("Photosynthetic Maximum (Am)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
+  theme_classic() + 
+  theme(
+    legend.title=element_text(face="bold", size=12),
+    legend.text=element_text(size=10),
+    axis.title=element_text(face="bold", size=10),
+    axis.text=element_text(size=8, color="black"), 
+    strip.text.x=element_text(face="italic", size=10)
+  )
+Am_fig
+
+####UNIVARIATE Figures and Analysis ---- Max Photosynthetic Rate (AQY)
+##Plot (AQY)##
+
+#Subset full data set for just Photosynthesis data (AQY)
+timeseries_AQY <- Apul_Plast_Metadata %>%
+  select(Genotype, timepoint, site, AQY)
+
+#Reorder data from beginning to try to get them all in a row at least:
+timeseries_AQY$Genotype <- factor(timeseries_AQY$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+
+AQY_fig <- ggplot(timeseries_AQY, aes(x = site, y = AQY, fill = timepoint, group=interaction(site,timepoint))) +
+  geom_boxplot(outlier.size = 0) +
+  geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
+  labs(fill = "Timepoint") +
+  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
+  xlab("Site") + 
+  ylab(expression(bold(paste("Maximum Photosynthetic Rate (AQY)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
+  theme_classic() + 
+  theme(
+    legend.title=element_text(face="bold", size=12),
+    legend.text=element_text(size=10),
+    axis.title=element_text(face="bold", size=10),
+    axis.text=element_text(size=8, color="black"), 
+    strip.text.x=element_text(face="italic", size=10)
+  )
+AQY_fig
+
+####UNIVARIATE Figures and Analysis ---- Respiration Rate (Rd)
+##Plot (Rd)##
+
+#Subset full data set for just Photosynthesis data (Rd)
+timeseries_Rd <- Apul_Plast_Metadata %>%
+  select(Genotype, timepoint, site, Rd)
+
+#Reorder data from beginning to try to get them all in a row at least:
+timeseries_Rd$Genotype <- factor(timeseries_Rd$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+
+Rd_fig <- ggplot(timeseries_Rd, aes(x = site, y = Rd, fill = timepoint, group=interaction(site,timepoint))) +
+  geom_boxplot(outlier.size = 0) +
+  geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
+  scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
+                            "site3" = "Site 3 \nHilton"))+
+  labs(fill = "Timepoint") +
+  scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
+  xlab("Site") + 
+  ylab(expression(bold(paste("Respiration Rate (Rd)"))))+
+  geom_vline(xintercept = 1.5, linetype = "longdash")+
+  theme_classic() + 
+  theme(
+    legend.title=element_text(face="bold", size=12),
+    legend.text=element_text(size=10),
+    axis.title=element_text(face="bold", size=10),
+    axis.text=element_text(size=8, color="black"), 
+    strip.text.x=element_text(face="italic", size=10)
+  )
+Rd_fig
+
+
 ###Configure all univariate functions into one major figure
 
-Fig <- ggarrange(biomass_fig, host_prot_fig, sym_counts_fig, tot_chl_cell_fig, tot_chl_cm2_fig, ncol = 3, nrow = 2)
-ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=8)
+Fig <- ggarrange(biomass_fig, host_prot_fig, Rd_fig, sym_counts_fig, Am_fig, AQY_fig, tot_chl_cm2_fig, tot_chl_cell_fig, ncol = 4, nrow = 2)
+ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=12)
 
 Fig
 
