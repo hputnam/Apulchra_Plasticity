@@ -505,15 +505,9 @@ geno <- full_join(geno, alpha)
 geno <- full_join(geno, Pmax)
 geno <- full_join(geno, Rd)
 
-
-geno_metadata <- geno
-geno_metadata <- geno_metadata %>% 
+#rename Apul colonies to ACR to match timeseries data
+geno_metadata <- geno %>% 
   mutate_at("colony_id", str_replace, "Apul", "ACR")
-
-
-######
-#START WORKIGN HERE
-#####
 
 #Edit the current metadata sheet to match the current timeseries metadata
 geno_metadata <- geno_metadata %>%
@@ -521,16 +515,24 @@ geno_metadata <- geno_metadata %>%
   mutate(month = "19-Oct") %>%
   mutate(nutrient = "NA") %>%
   mutate(site_code = "Nursery") %>%
-  mutate(chla.ug.cell = geno_metadata$chla.ug.cm2 / geno_metadata$cells.cm2) %>%
-  mutate(chlc2.ug.cell = geno_metadata$chlc2.ug.cm2/ geno_metadata$cells.cm2) %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, AFDW.mg.cm2, host_prot_ug.cm2, chla.ug.cm2, chlc2.ug.cm2, Pmax, alpha, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+  mutate(tot_chl.ug.cm2 = geno_metadata$chla.ug.cm2 + geno_metadata$chlc2.ug.cm2) %>%
+  select(colony_id, Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, tot_chl.ug.cm2, Am, AQY, Rd, cells.cm2)
 
+  
+geno_metadata <- geno_metadata %>%
+  mutate(tot_chl.ug.cell = geno_metadata$tot_chl.ug.cm2 / geno_metadata$cells.cm2)
 
+######
+#START WORKIGN HERE
+#####
 
 ###Compiled data from Jan/Nov has host and sym AFDW separated while we have it as one big thing, it is also missing protein.
 ##Need to create new column in data that is Holobiont AFDW
 # colony_id, Genotype, timepoint, month, nutrient, site_code
 timeseries_data <- read.csv("data/data_jan_nov_SA.csv")
+
+#change to conetta_data.csv and then filter timepoints 2 and 3 out
+#ignore NA's in downstream analysis and average by genotype for each metric
 
 
 timeseries_data <- timeseries_data %>%
