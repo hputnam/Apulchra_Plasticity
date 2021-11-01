@@ -280,7 +280,7 @@ cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append 
 #Sym Protein______________________________________
 #Did not end up using since only host prot run on timeseries data down the line
 #sym_prot_anova<-anova(model3) #anova for biomass
-$sym_prot_tkyhsd<-TukeyHSD(model3) #posthoc tests within anova for biomass
+#sym_prot_tkyhsd<-TukeyHSD(model3) #posthoc tests within anova for biomass
 
 ## Concatenate ANOVA results in txt file (Sym Protein)
 #cat("C) ANOVA results of Symbiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -338,19 +338,36 @@ capture.output(tot_chl_per.cell_tkyhsd, file = "output/Table_TP0_Univariates.vs.
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
-#Am ()____________
-tot_chl_per.cell_anova<-anova(model6) #anova for Total Chl per cell
-tot_chl_per.cell_tkyhsd<-TukeyHSD(model6) #posthoc tests within anova for Total Chl per cell
+#Am (Max Photosynthesis)____________
+Am_anova<-anova(model6) #anova for Am
+Am_tkyhsd<-TukeyHSD(model6) #posthoc tests within anova for Am
 
-## Concatenate ANOVA results in txt file (Total CHL per cell)
-cat("F) ANOVA results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(tot_chl_per.cell_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+## Concatenate ANOVA results in txt file (Max Photosynthesis)
+cat("F) ANOVA results of Max Photosynthesis Levels at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(Am_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
-## Concatenate TukeyHSD results in txt file (Total CHL per cell)
-cat("F) TukeyHSD results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(tot_chl_per.cell_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+## Concatenate TukeyHSD results in txt file (Max Photosynthesis)
+cat("F) TukeyHSD results of Max Photosynthesis Levels at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(Am_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
+#AQY (Max Photosynthetic Rate)____________
+AQY_anova<-anova(model7) #anova for AQY
+AQY_tkyhsd<-TukeyHSD(model7) #posthoc tests within anova for AQY
+
+## Concatenate ANOVA results in txt file (Max Photosynthetic Rate)
+cat("G) ANOVA results of Max Photosynthetic Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(AQY_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Max Photosynthetic Rate)
+cat("G) TukeyHSD results of Max Photosynthetic Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(AQY_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+
 
 
 #______________________________________________________________________________________________
