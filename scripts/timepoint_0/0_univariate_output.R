@@ -192,14 +192,14 @@ Tot_CHL.cell_TP0 <- TP0_metadata %>%
 Tot_CHL.cell_TP0
 
 #adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation2 <- data.frame(
+annotation3 <- data.frame(
   x = c(1, 2, 3),
   y = c(1.0e-05, 2.0e-05, 1.0e-05),
   label = c("B", "AB", "B")
 )
 
 #add text to figure
-Tot_CHL.cell_TP0 <- Tot_CHL.cell_TP0 + geom_text(data = annotation2, aes (x=x, y=y, label=label),
+Tot_CHL.cell_TP0 <- Tot_CHL.cell_TP0 + geom_text(data = annotation3, aes (x=x, y=y, label=label),
                                                color = "black",
                                                size = 5, fontface= "bold")
 Tot_CHL.cell_TP0
@@ -218,23 +218,100 @@ sym_dens_TP0 <- TP0_metadata %>%
 
 sym_dens_TP0
 #adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation2 <- data.frame(
+annotation4 <- data.frame(
   x = c(1, 2, 3),
   y = c(7.50e+05, 1.25e+06, 9.00e+05),
   label = c("B", "AB", "B")
 )
 
 #add text to figure
-sym_dens_TP0 <- sym_dens_TP0 + geom_text(data = annotation2, aes (x=x, y=y, label=label),
+sym_dens_TP0 <- sym_dens_TP0 + geom_text(data = annotation4, aes (x=x, y=y, label=label),
                                                  color = "black",
                                                  size = 5, fontface= "bold")
 sym_dens_TP0
 
+#Am (Max Photosynthesis) fig
+Am_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = Am, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Max Photosynthesis") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+
+Am_TP0
+#adding significance to indicators manually to plot based on TukeyHSD Posthoc
+annotation5 <- data.frame(
+  x = c(1, 2, 3),
+  y = c(1, 2.1, 2),
+  label = c("A", "B", "B")
+)
+
+#add text to figure
+Am_TP0 <- Am_TP0 + geom_text(data = annotation5, aes (x=x, y=y, label=label),
+                                         color = "black",
+                                         size = 5, fontface= "bold")
+Am_TP0
+
+#AQY (Max Photosynthetic Rate) fig
+AQY_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = AQY, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Max Photosynthetic Rate") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+
+AQY_TP0
+#adding significance to indicators manually to plot based on TukeyHSD Posthoc
+annotation6 <- data.frame(
+  x = c(1, 2, 3),
+  y = c(0.004, 0.004, 0.004),
+  label = c("A", "A", "A")
+)
+
+#add text to figure
+AQY_TP0 <- AQY_TP0 + geom_text(data = annotation6, aes (x=x, y=y, label=label),
+                             color = "black",
+                             size = 5, fontface= "bold")
+AQY_TP0
+
+
+#Rd (Respiration Rate) Fig
+Rd_TP0 <- TP0_metadata %>%
+  ggplot(aes(x = site, y = Rd, color = site)) +
+  labs(x = "Site", y = "", color = "Site") +
+  ggtitle("Respiration Rate") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_jitter(width = 0.1) +                                            # Plot all points
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
+
+Rd_TP0
+
+#adding significance to indicators manually to plot based on TukeyHSD Posthoc
+annotation7 <- data.frame(
+  x = c(1, 2, 3),
+  y = c(0.4, 0.7, 0.6),
+  label = c("A", "B", "B")
+)
+
+#add text to figure
+Rd_TP0 <- Rd_TP0 + geom_text(data = annotation7, aes (x=x, y=y, label=label),
+                               color = "black",
+                               size = 5, fontface= "bold")
+Rd_TP0
+
 
 #Configuring all the saved figures for TP0 into final stage of itself
-TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0, sym_dens_TP0,Tot_CHL.cell_TP0,Tot_CHL.cm2_TP0, ncol = 3, nrow = 2)
+TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0, Rd_TP0, sym_dens_TP0, Am_TP0, AQY_TP0,Tot_CHL.cm2_TP0, Tot_CHL.cell_TP0, ncol = 4, nrow = 2)
 
-ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=12, height=12)
+ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=16, height=12)
 
 #STATS on all
 model1 <- aov(log10(AFDW.mg.cm2) ~ site, data = TP0_metadata) #save model for biomass
@@ -367,6 +444,19 @@ cat("G) TukeyHSD results of Max Photosynthetic Rate at TP0 sites\n", file = "out
 capture.output(AQY_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
+#Rd (Respiration Rate)____________
+Rd_anova<-anova(model8) #anova for Rd
+Rd_tkyhsd<-TukeyHSD(model8) #posthoc tests within anova for Rd
+
+## Concatenate ANOVA results in txt file (Respiration Rate)
+cat("H) ANOVA results of Respiration Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(AQY_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+
+## Concatenate TukeyHSD results in txt file (Respiration Rate)
+cat("H) TukeyHSD results of Respiration Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(AQY_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
 
