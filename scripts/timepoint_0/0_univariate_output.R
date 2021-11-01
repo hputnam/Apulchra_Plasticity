@@ -512,15 +512,15 @@ geno_metadata <- geno %>%
 #Edit the current metadata sheet to match the current timeseries metadata
 geno_metadata <- geno_metadata %>%
   mutate(Genotype = genotype) %>%
-  mutate(month = "19-Oct") %>%
-  mutate(nutrient = "NA") %>%
-  mutate(site_code = "Nursery") %>%
+  mutate(site = "Nursery") %>%
   mutate(tot_chl.ug.cm2 = geno_metadata$chla.ug.cm2 + geno_metadata$chlc2.ug.cm2) %>%
   select(colony_id, Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, tot_chl.ug.cm2, Am, AQY, Rd, cells.cm2)
 
   
 geno_metadata <- geno_metadata %>%
-  mutate(tot_chl.ug.cell = geno_metadata$tot_chl.ug.cm2 / geno_metadata$cells.cm2)
+  mutate(tot_chl.ug.cell = geno_metadata$tot_chl.ug.cm2 / geno_metadata$cells.cm2) %>%
+  select(Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, tot_chl.ug.cm2, tot_chl.ug.cell, Am, AQY, Rd, cells.cm2)
+
 
 ######
 #START WORKIGN HERE
@@ -529,27 +529,65 @@ geno_metadata <- geno_metadata %>%
 ###Compiled data from Jan/Nov has host and sym AFDW separated while we have it as one big thing, it is also missing protein.
 ##Need to create new column in data that is Holobiont AFDW
 # colony_id, Genotype, timepoint, month, nutrient, site_code
-timeseries_data <- read.csv("data/data_jan_nov_SA.csv")
+timeseries_data <- read.csv("data/conetta_data.csv") #raw output file from Ariana
+coral_geno <- read.csv("data/data_jan_nov_SA.csv") #edited csv file that Hollie and I made 
+
+coral_geno <- coral_geno %>% 
+  mutate(colony_id = ï..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
+  select(colony_id, Genotype, timepoint) #only selecting these columns to fit output data to timepoint 1 and 4
+
+
+# %>% #creating a site column
+                      
+timeseries_data1 <- right_join(timeseries_data, coral_geno) #joining the data to each other by the Genotype info
 
 #change to conetta_data.csv and then filter timepoints 2 and 3 out
 #ignore NA's in downstream analysis and average by genotype for each metric
+timeseries_data1 <- timeseries_data1 %>%
+  filter(timepoint == "timepoint1" | timepoint == "timepoint4") %>%
+  select(colony_id, Genotype, timepoint, nutrient, Host_AFDW.mg.cm2, Sym_AFDW.mg.cm2, chla.ug.cm2, chlc2.ug.cm2, prot_ug.cm2, Am, AQY, Rd, cells.cm2)
 
+#Creating total chlorophyll per frag column
+timeseries_data1 <- timeseries_data1 %>%
+  mutate(tot_chl.ug.cm2 = timeseries_data1$chla.ug.cm2 + timeseries_data1$chlc2.ug.cm2) 
 
-timeseries_data <- timeseries_data %>%
+#Creating total chlorophyll per cell/symbiont column
+timeseries_data1 <- timeseries_data1 %>%
+  mutate(tot_chl.ug.cell = timeseries_data1$tot_chl.ug.cm2 / timeseries_data1$cells.cm2)
+
+#creating a site column
+timeseries_data1<- timeseries_data1 %>%
+  mutate(site = case_when(timeseries_data1$nutrient == "High" ~ "site1", 
+                          timeseries_data1$nutrient == "Low" ~ "site2", 
+                          timeseries_data1$nutrient == "Medium" ~ "site3"))
+
+#getting finalized column headings (AFDW and host prot)
+timeseries_data2 <- timeseries_data1 %>%
   mutate(AFDW.mg.cm2 = Host_AFDW.mg.cm2 + Sym_AFDW.mg.cm2) %>%
-  mutate(colony_id = ï..colony_id) %>%
   mutate(host_prot_ug.cm2 = prot_ug.cm2) %>%
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, host_prot_ug.cm2, chla.ug.cm2, chlc2.ug.cm2, Am, AQY, Rd, cells.cm2, chla.ug.cell, chlc2.ug.cell)
+  select(colony_id, Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, Am, AQY, Rd, cells.cm2, tot_chl.ug.cm2, tot_chl.ug.cell)
 
-Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data) #STILL NEED TO ADD Host and Holobiont Protein to it
+timeseries_data3 <- timeseries_data2 %>% #get the means of all the sites across timepoint and genotype (24 datapoints in all)
+  group_by(Genotype, timepoint, site) %>%
+  summarise(across(everything(), list(mean)))
 
-Apul_Plast_Metadata$group <- paste0(Apul_Plast_Metadata$Genotype,Apul_Plast_Metadata$timepoint, Apul_Plast_Metadata$site_code)
+#rename and restructure final timeseries data file
+timeseries_data3 <- timeseries_data3 %>%
+  mutate(AFDW.mg.cm2 = AFDW.mg.cm2_1) %>%
+  mutate(host_prot_ug.cm2 = host_prot_ug.cm2_1) %>%
+  mutate(tot_chl.ug.cm2 = tot_chl.ug.cm2_1) %>%
+  mutate(tot_chl.ug.cell = tot_chl.ug.cell_1) %>%
+  mutate(Am = Am_1) %>%
+  mutate(AQY = AQY_1) %>%
+  mutate(Rd = Rd_1) %>%
+  mutate(cells.cm2 = cells.cm2_1) %>%
+  select(Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, tot_chl.ug.cm2, tot_chl.ug.cell, Am, AQY, Rd, cells.cm2)
+
+
+Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data3) #Combined and finalized dataset for timeseries
+
 
 Apul_Plast_Metadata <- Apul_Plast_Metadata %>%
-  mutate(total_chl.ug.cm2 = Apul_Plast_Metadata$chla.ug.cm2 + Apul_Plast_Metadata$chlc2.ug.cm2) %>%
-  mutate(total_chl.ug.cell = Apul_Plast_Metadata$chla.ug.cell + Apul_Plast_Metadata$chlc2.ug.cell) %>%
-  distinct(group, .keep_all = TRUE) %>% #removing duplicate data
-  select(colony_id, Genotype, timepoint, month, nutrient, site_code, AFDW.mg.cm2, host_prot_ug.cm2, total_chl.ug.cm2, total_chl.ug.cell, Am, AQY, Rd, cells.cm2, group) %>%
   write_csv(path = "data/complete_timeseries_data.csv")
 
 
