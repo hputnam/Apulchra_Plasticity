@@ -3,6 +3,7 @@ library(tidyverse)
 library(ggpubr)
 library(showtext)
 library(dplyr)
+library(multcompView)
 
 ####NURSERY VS WILD SITES TP0 ____________________________________________________________
 #reading in all data files for TP0 (not filtered for genotypes)
@@ -533,7 +534,7 @@ timeseries_data <- read.csv("data/conetta_data.csv") #raw output file from Arian
 coral_geno <- read.csv("data/data_jan_nov_SA.csv") #edited csv file that Hollie and I made 
 
 coral_geno <- coral_geno %>% 
-  mutate(colony_id = Ã¯..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
+  mutate(colony_id = ï..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
   select(colony_id, Genotype, timepoint) #only selecting these columns to fit output data to timepoint 1 and 4
 
 
@@ -599,9 +600,6 @@ library(RColorBrewer)
 timeseries_biomass <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, AFDW.mg.cm2)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_biomass$Genotype <- factor(timeseries_biomass$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
 #Make Boxplot - BIOMASS
 biomass_fig <- ggplot(timeseries_biomass, aes(x = site, y = AFDW.mg.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
@@ -621,7 +619,27 @@ biomass_fig <- ggplot(timeseries_biomass, aes(x = site, y = AFDW.mg.cm2, fill = 
     axis.text=element_text(size=8, color="black"), 
     strip.text.x=element_text(face="italic", size=10)
   )
+biomass_fig
 
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_AFDW <- multcompLetters4(AFDW_stats, Tukey_AFDW) 
+print(cld_AFDW) #printing these values to look at them
+
+#summarising by site and time point
+TK_AFDW <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(AFDW.mg.cm2), quant = quantile(AFDW.mg.cm2, probs = 0.75))
+
+print(TK_AFDW)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_AFDW <- as.data.frame.list(cld_AFDW$`site:timepoint`)
+TK_AFDW$cld <- cld_AFDW$Letters
+
+#Adding significance letters to plot
+biomass_fig1 <- biomass_fig + geom_text(data = TK_AFDW, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                                color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, -0.5, 6.75, -0.5, 6.75, -0.5))
+biomass_fig1
 
 
 ####UNIVARIATE Figures and Analysis ---- TOTAL CHL (ug/cm2)
@@ -631,9 +649,7 @@ biomass_fig <- ggplot(timeseries_biomass, aes(x = site, y = AFDW.mg.cm2, fill = 
 timeseries_tot_chl_cm2 <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, tot_chl.ug.cm2)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_tot_chl_cm2$Genotype <- factor(timeseries_tot_chl_cm2$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
+#PLOT
 tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site, y = tot_chl.ug.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
@@ -653,6 +669,27 @@ tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site, y = tot_chl.ug.c
     axis.text=element_text(size=8, color="black"), 
     strip.text.x=element_text(face="italic", size=10)
   )
+tot_chl_cm2_fig
+
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_CHL.cm2 <- multcompLetters4(tot_chl_ug.cm2_stats, Tukey_CHL.cm2) 
+print(cld_CHL.cm2) #printing these values to look at them
+
+#summarising by site and time point
+TK_CHL.cm2 <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(tot_chl.ug.cm2), quant = quantile(tot_chl.ug.cm2, probs = 0.75))
+
+print(TK_CHL.cm2)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_CHL.cm2 <- as.data.frame.list(cld_CHL.cm2$`site:timepoint`)
+TK_CHL.cm2$cld <- cld_CHL.cm2$Letters
+
+#Adding significance letters to plot
+tot_chl_cm2_fig1 <- tot_chl_cm2_fig + geom_text(data = TK_CHL.cm2, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                                  color = "black", size = 5, fontface= "bold", vjust = c(-1,-1,-1,-2,-1,-1), hjust = c(6.75, 0, 3.5, 0, 6.75, 0))
+tot_chl_cm2_fig1
 
 ####UNIVARIATE Figures and Analysis ---- Total CHL per Symbiont (ug/cell)
 ##Plot CHL per Symbiont (ug/cell)##
@@ -661,9 +698,7 @@ tot_chl_cm2_fig <- ggplot(timeseries_tot_chl_cm2, aes(x = site, y = tot_chl.ug.c
 timeseries_tot_chl_cell <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, tot_chl.ug.cell)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_tot_chl_cell$Genotype <- factor(timeseries_tot_chl_cell$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
+#PLOT
 tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site, y = tot_chl.ug.cell, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
@@ -683,6 +718,27 @@ tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site, y = tot_chl.ug
     axis.text=element_text(size=8, color="black"), 
     strip.text.x=element_text(face="italic", size=10)
   )
+tot_chl_cell_fig
+
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_CHL.cell <- multcompLetters4(tot_chl_ug.cell_stats, Tukey_CHL.cell) 
+print(cld_CHL.cell) #printing these values to look at them
+
+#summarising by site and time point
+TK_CHL.cell <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(tot_chl.ug.cell), quant = quantile(tot_chl.ug.cell, probs = 0.75))
+
+print(TK_CHL.cell)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_CHL.cell <- as.data.frame.list(cld_CHL.cell$`site:timepoint`)
+TK_CHL.cell$cld <- cld_CHL.cell$Letters
+
+#Adding significance letters to plot
+tot_chl_cell_fig1 <- tot_chl_cell_fig + geom_text(data = TK_CHL.cell, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                              color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, 0, 3.5, 0, 3.5, 0))
+tot_chl_cell_fig1
 
 
 ####UNIVARIATE Figures and Analysis ---- SYM Density (cells/cm2)
@@ -692,9 +748,7 @@ tot_chl_cell_fig <- ggplot(timeseries_tot_chl_cell, aes(x = site, y = tot_chl.ug
 timeseries_sym_counts <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, cells.cm2)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_sym_counts$Genotype <- factor(timeseries_sym_counts$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
+#PLOT
 sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site, y = cells.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
@@ -715,6 +769,27 @@ sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site, y = cells.cm2, fil
     strip.text.x=element_text(face="italic", size=10)
   )
 
+sym_counts_fig
+
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_Sym <- multcompLetters4(sym_dens_stats, Tukey_Sym) 
+print(cld_Sym) #printing these values to look at them
+
+#summarising by site and time point
+TK_Sym <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(cells.cm2), quant = quantile(cells.cm2, probs = 0.75))
+
+print(TK_Sym)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_Sym <- as.data.frame.list(cld_Sym$`site:timepoint`)
+TK_Sym$cld <- cld_Sym$Letters
+
+#Adding significance letters to plot
+sym_counts_fig1 <- sym_counts_fig + geom_text(data = TK_Sym, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                            color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, 0, 2.25, 0, 6.75, 0))
+sym_counts_fig1
 
 ####UNIVARIATE Figures and Analysis ---- Host Prot (ug/cm2)
 ##Plot Host Prot (ug/cm2)##
@@ -723,9 +798,7 @@ sym_counts_fig <- ggplot(timeseries_sym_counts, aes(x = site, y = cells.cm2, fil
 timeseries_host_prot <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, host_prot_ug.cm2)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_host_prot$Genotype <- factor(timeseries_host_prot$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
+#PLOT
 host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site, y = host_prot_ug.cm2, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
@@ -735,6 +808,7 @@ host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site, y = host_prot_ug.cm2
   scale_fill_manual(values = c("#EDF8B1", "#7FCDBB", "#2C7FB8"), limits = c("timepoint0", "timepoint1", "timepoint4"), labels = c("October 2019", "January 2020", "November 2020")) +
   xlab("Site") + 
   ylab(expression(bold(paste("Host Total Protein (ug/cm2)"))))+
+  ylim(0, 650) +
   geom_vline(xintercept = 1.5, linetype = "longdash")+
   theme_classic() + 
   theme(
@@ -747,6 +821,27 @@ host_prot_fig <- ggplot(timeseries_host_prot, aes(x = site, y = host_prot_ug.cm2
 
 host_prot_fig
 
+
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_Prot <- multcompLetters4(host_prot_stats, Tukey_Host_Prot) 
+print(cld_Prot) #printing these values to look at them
+
+#summarising by site and time point
+TK_Prot <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(host_prot_ug.cm2), quant = quantile(host_prot_ug.cm2, probs = 0.75))
+
+print(TK_Prot)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_Prot <- as.data.frame.list(cld_Prot$`site:timepoint`)
+TK_Prot$cld <- cld_Prot$Letters
+
+#Adding significance letters to plot
+host_prot_fig1 <- host_prot_fig + geom_text(data = TK_Prot, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                              color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.5, 0, 3.5, 0, 6.5, -0.5))
+host_prot_fig1
+
 ####UNIVARIATE Figures and Analysis ---- Max Photosynthesis (Am)
 ##Plot Pmax (Am)##
 
@@ -754,9 +849,7 @@ host_prot_fig
 timeseries_Am <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, Am)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_Am$Genotype <- factor(timeseries_Am$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
+#PLOT
 Am_fig <- ggplot(timeseries_Am, aes(x = site, y = Am, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
@@ -777,6 +870,28 @@ Am_fig <- ggplot(timeseries_Am, aes(x = site, y = Am, fill = timepoint, group=in
   )
 Am_fig
 
+
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_Am <- multcompLetters4(Am_stats, Tukey_Am) 
+print(cld_Am) #printing these values to look at them
+
+#summarising by site and time point
+TK_Am <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(Am), quant = quantile(Am, probs = 0.75))
+
+print(TK_Am)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_Am <- as.data.frame.list(cld_Am$`site:timepoint`)
+TK_Am$cld <- cld_Am$Letters
+
+#Adding significance letters to plot
+Am_fig1 <- Am_fig + geom_text(data = TK_Am, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.5, -0.5, 6.5, -0.5, 6.5, -0.5))
+Am_fig1
+
+
 ####UNIVARIATE Figures and Analysis ---- Max Photosynthetic Rate (AQY)
 ##Plot (AQY)##
 
@@ -784,9 +899,7 @@ Am_fig
 timeseries_AQY <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, AQY)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_AQY$Genotype <- factor(timeseries_AQY$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
-
+#Plot
 AQY_fig <- ggplot(timeseries_AQY, aes(x = site, y = AQY, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
@@ -807,6 +920,26 @@ AQY_fig <- ggplot(timeseries_AQY, aes(x = site, y = AQY, fill = timepoint, group
   )
 AQY_fig
 
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld_AQY <- multcompLetters4(AQY_stats, Tukey_AQY) 
+print(cld_AQY) #printing these values to look at them
+
+#summarising by site and time point
+TK_AQY <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(AQY), quant = quantile(AQY, probs = 0.75))
+
+print(TK_AQY)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld_AQY <- as.data.frame.list(cld_AQY$`site:timepoint`)
+TK_AQY$cld <- cld_AQY$Letters
+
+#Adding significance letters to plot
+AQY_fig1 <- AQY_fig + geom_text(data = TK_AQY, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                              color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.5, -0.5, 6.5, -0.5, 6.5, -0.5))
+AQY_fig1
+
 ####UNIVARIATE Figures and Analysis ---- Respiration Rate (Rd)
 ##Plot (Rd)##
 
@@ -814,10 +947,9 @@ AQY_fig
 timeseries_Rd <- Apul_Plast_Metadata %>%
   select(Genotype, timepoint, site, Rd)
 
-#Reorder data from beginning to try to get them all in a row at least:
-timeseries_Rd$Genotype <- factor(timeseries_Rd$Genotype, levels = c("Genotype 4", "Genotype 6", "Genotype 8", "Genotype 15")) 
+#PLOT
 
-Rd_fig <- ggplot(timeseries_Rd, aes(x = site, y = Rd, fill = timepoint, group=interaction(site,timepoint))) +
+Rd_fig <- ggplot(Apul_Plast_Metadata, aes(x = site, y = Rd, fill = timepoint, group=interaction(site,timepoint))) +
   geom_boxplot(outlier.size = 0) +
   geom_point(pch =21, size=2, position = position_jitterdodge(0.2)) +
   scale_x_discrete(labels=c("Nursery" = "Nursery", "site1" = "Site 1 \nManava", "site2" = "Site 2 \nMahana",
@@ -835,12 +967,32 @@ Rd_fig <- ggplot(timeseries_Rd, aes(x = site, y = Rd, fill = timepoint, group=in
     axis.text=element_text(size=8, color="black"), 
     strip.text.x=element_text(face="italic", size=10)
   )
-Rd_fig
+Rd_fig 
+
+#adding significance bars for the tukeyhsd values 
+#getting the significance values from the ANOVA and TUKEY which are represented by a different letter
+cld <- multcompLetters4(Rd_stats, Tukey_Rd) 
+print(cld) #printing these values to look at them
+
+#summarising by site and time point
+TK_Rd <- group_by(Apul_Plast_Metadata_noTP0, site, timepoint) %>%
+  summarise(mean=mean(Rd), quant = quantile(Rd, probs = 0.75))
+
+print(TK_Rd)
+
+#extracting the compact letter display and adding to the TK_Rd table
+cld <- as.data.frame.list(cld$`site:timepoint`)
+TK_Rd$cld <- cld$Letters
+
+#Adding significance letters to plot
+Rd_fig1 <- Rd_fig + geom_text(data = TK_Rd, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                              color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6, 0, 2.25, 0, 3.25, -0.5))
+Rd_fig1
 
 
 ###Configure all univariate functions into one major figure
 
-Fig <- ggarrange(biomass_fig, host_prot_fig, Rd_fig, sym_counts_fig, Am_fig, AQY_fig, tot_chl_cm2_fig, tot_chl_cell_fig, ncol = 4, nrow = 2)
+Fig <- ggarrange(biomass_fig1, host_prot_fig1, Rd_fig1, sym_counts_fig1, Am_fig1, AQY_fig1, tot_chl_cm2_fig1, tot_chl_cell_fig1, ncol = 4, nrow = 2)
 ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=12)
 
 Fig
@@ -848,12 +1000,56 @@ Fig
 ####STATS FOR UNIVARIATE TIMESERIES ANALYSIS
 colnames(Apul_Plast_Metadata)
 
-fixed_2way <- aov(AFDW.mg.cm2 ~site_code*timepoint, Apul_Plast_Metadata)
-summary(fixed_2way)
+#FIXED 2 Way ANOVA
+#Filter out timepoint_0 b/c not included in these analyses
+Apul_Plast_Metadata_noTP0 <- Apul_Plast_Metadata %>%
+  filter(timepoint == "timepoint1" | timepoint == "timepoint4")
 
+#BIOMASS (nothing significant)
+AFDW_stats <- aov(AFDW.mg.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(AFDW_stats)
 
+Tukey_AFDW <- TukeyHSD(AFDW_stats)
 
-library(lme4)
-mixed_2way <- lmer(AFDW.mg.cm2 ~site_code*timepoint + (1 | Genotype), Apul_Plast_Metadata)
-summary(mixed_2way)
+#HOST PROTEIN (site and timepoint individually significant)
+host_prot_stats <- aov(host_prot_ug.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(host_prot_stats)
+
+Tukey_Host_Prot <- TukeyHSD(host_prot_stats)
+
+#TOTAL CHL per FRAG - ug/cm2 (site and timepoint individually significant)
+tot_chl_ug.cm2_stats <- aov(tot_chl.ug.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(tot_chl_ug.cm2_stats)
+
+Tukey_CHL.cm2 <- TukeyHSD(tot_chl_ug.cm2_stats)
+
+#TOTAL CHL per SYM - ug/cell (only time point significant)
+tot_chl_ug.cell_stats <- aov(tot_chl.ug.cell ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(tot_chl_ug.cell_stats)
+
+Tukey_CHL.cell <- TukeyHSD(tot_chl_ug.cell_stats)
+
+#SYM DENSITY cells/cm2 (only time point significant)
+sym_dens_stats <- aov(cells.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(sym_dens_stats)
+
+Tukey_Sym <- TukeyHSD(sym_dens_stats)
+
+#Photosynthetic Maximums Am (nothing significant)
+Am_stats <- aov(Am ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(Am_stats)
+
+Tukey_Am <- TukeyHSD(Am_stats)
+
+#Max Photosynthetic Rate AQY (nothing significant)
+AQY_stats <- aov(AQY ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(AQY_stats)
+
+Tukey_AQY <- TukeyHSD(AQY_stats)
+
+#Respiration Rates Rd (timepoint significant)
+Rd_stats <- aov(Rd ~site*timepoint, Apul_Plast_Metadata_noTP0)
+summary(Rd_stats)
+
+Tukey_Rd <- TukeyHSD(Rd_stats)
 
