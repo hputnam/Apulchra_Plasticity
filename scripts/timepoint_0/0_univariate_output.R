@@ -637,9 +637,14 @@ cld_AFDW <- as.data.frame.list(cld_AFDW$`site:timepoint`)
 TK_AFDW$cld <- cld_AFDW$Letters
 
 #Adding significance letters to plot
-biomass_fig1 <- biomass_fig + geom_text(data = TK_AFDW, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#Spacing of significance letters for single plots 
+biomass_fig2 <- biomass_fig + geom_text(data = TK_AFDW, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                                                 color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, -0.5, 6.75, -0.5, 6.75, -0.5))
-biomass_fig1
+biomass_fig2
+
+#Spacing of significance letters for combined univariate plot
+biomass_fig1 <- biomass_fig + geom_text(data = TK_AFDW, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                        color = "black", size = 3, fontface= "bold", vjust = -1, hjust = c(4, -1, 4, -1, 4, -1))
 
 
 ####UNIVARIATE Figures and Analysis ---- TOTAL CHL (ug/cm2)
@@ -687,9 +692,15 @@ cld_CHL.cm2 <- as.data.frame.list(cld_CHL.cm2$`site:timepoint`)
 TK_CHL.cm2$cld <- cld_CHL.cm2$Letters
 
 #Adding significance letters to plot
-tot_chl_cm2_fig1 <- tot_chl_cm2_fig + geom_text(data = TK_CHL.cm2, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#Spacing of significance letters on individual plot
+tot_chl_cm2_fig2 <- tot_chl_cm2_fig + geom_text(data = TK_CHL.cm2, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                                                   color = "black", size = 5, fontface= "bold", vjust = c(-1,-1,-1,-2,-1,-1), hjust = c(6.75, 0, 3.5, 0, 6.75, 0))
-tot_chl_cm2_fig1
+tot_chl_cm2_fig2
+
+#Spacing of significance letters on combined univariate plot
+tot_chl_cm2_fig1 <- tot_chl_cm2_fig + geom_text(data = TK_CHL.cm2, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                                color = "black", size = 3, fontface= "bold", vjust = c(-1, -1, -1.5, -2.5, -1.5, -1.5), hjust = c(4, 0, 3, -0.5, 4, -0.5))
+
 
 ####UNIVARIATE Figures and Analysis ---- Total CHL per Symbiont (ug/cell)
 ##Plot CHL per Symbiont (ug/cell)##
@@ -736,9 +747,14 @@ cld_CHL.cell <- as.data.frame.list(cld_CHL.cell$`site:timepoint`)
 TK_CHL.cell$cld <- cld_CHL.cell$Letters
 
 #Adding significance letters to plot
-tot_chl_cell_fig1 <- tot_chl_cell_fig + geom_text(data = TK_CHL.cell, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#Spacing of significance letters on an individual plot
+tot_chl_cell_fig2 <- tot_chl_cell_fig + geom_text(data = TK_CHL.cell, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                                               color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, 0, 3.5, 0, 3.5, 0))
-tot_chl_cell_fig1
+tot_chl_cell_fig2
+
+#Spacing of significance letters on combined univariate plot
+tot_chl_cell_fig1 <- tot_chl_cell_fig + geom_text(data = TK_CHL.cell, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                                  color = "black", size = 3, fontface= "bold", vjust = c(-1.5, -1, -1, -1, -0.5, -1), hjust = c(4, 0.5, 2.5, 0.5, 2.5, -0.5))
 
 
 ####UNIVARIATE Figures and Analysis ---- SYM Density (cells/cm2)
@@ -787,9 +803,14 @@ cld_Sym <- as.data.frame.list(cld_Sym$`site:timepoint`)
 TK_Sym$cld <- cld_Sym$Letters
 
 #Adding significance letters to plot
-sym_counts_fig1 <- sym_counts_fig + geom_text(data = TK_Sym, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#Spacing of significance letters on an individual plot
+sym_counts_fig2 <- sym_counts_fig + geom_text(data = TK_Sym, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                                             color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, 0, 2.25, 0, 6.75, 0))
-sym_counts_fig1
+sym_counts_fig2
+
+#Spacing of significance letters on combined univariate plot
+sym_counts_fig1 <- sym_counts_fig + geom_text(data = TK_Sym, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                              color = "black", size = 3, fontface= "bold", vjust = c(-1.5, -1, -3.5, -2, -2, -2), hjust = c(4, 0.5, 1.5, 0,4, -1))
 
 ####UNIVARIATE Figures and Analysis ---- Host Prot (ug/cm2)
 ##Plot Host Prot (ug/cm2)##
@@ -838,9 +859,14 @@ cld_Prot <- as.data.frame.list(cld_Prot$`site:timepoint`)
 TK_Prot$cld <- cld_Prot$Letters
 
 #Adding significance letters to plot
-host_prot_fig1 <- host_prot_fig + geom_text(data = TK_Prot, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#spacing of significance letters for individual plot
+host_prot_fig2 <- host_prot_fig + geom_text(data = TK_Prot, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                               color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.5, 0, 3.5, 0, 6.5, -0.5))
-host_prot_fig1
+host_prot_fig2
+
+#spacing of significance letters for combined univariate plot
+host_prot_fig1 <-host_prot_fig + geom_text(data = TK_Prot, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                           color = "black", size = 3, fontface= "bold", vjust = c(-1, -3.5, -1.5, -1, -1.5, -1.5), hjust = c(4, 0,2.5, 0,4, -0.5))
 
 ####UNIVARIATE Figures and Analysis ---- Max Photosynthesis (Am)
 ##Plot Pmax (Am)##
@@ -887,9 +913,14 @@ cld_Am <- as.data.frame.list(cld_Am$`site:timepoint`)
 TK_Am$cld <- cld_Am$Letters
 
 #Adding significance letters to plot
-Am_fig1 <- Am_fig + geom_text(data = TK_Am, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#Spacing of significance letters for individual plot
+Am_fig2 <- Am_fig + geom_text(data = TK_Am, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                                 color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.5, -0.5, 6.5, -0.5, 6.5, -0.5))
-Am_fig1
+Am_fig2
+
+#Spacing of significance letters for combined univariate plot
+Am_fig1 <- Am_fig + geom_text(data = TK_Am, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                              color = "black", size = 3, fontface= "bold", vjust = c(-1,-1,-1,-3,-1,-1), hjust = c(4, -1,4, -1,4, -1))
 
 
 ####UNIVARIATE Figures and Analysis ---- Max Photosynthetic Rate (AQY)
@@ -936,9 +967,13 @@ cld_AQY <- as.data.frame.list(cld_AQY$`site:timepoint`)
 TK_AQY$cld <- cld_AQY$Letters
 
 #Adding significance letters to plot
-AQY_fig1 <- AQY_fig + geom_text(data = TK_AQY, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#Spacing for significance letters for individual plot 
+AQY_fig2 <- AQY_fig + geom_text(data = TK_AQY, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                               color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.5, -0.5, 6.5, -0.5, 6.5, -0.5))
-AQY_fig1
+
+#Spacing for significance letters for combined univariate plot 
+AQY_fig1 <- AQY_fig + geom_text(data = TK_AQY, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                                color = "black", size = 3, fontface= "bold", vjust = c(-1.5, -3,-1.5,-1.5,-1.5,-1.5), hjust = c(4, -0.5, 4, -0.5, 4, -0.5))
 
 ####UNIVARIATE Figures and Analysis ---- Respiration Rate (Rd)
 ##Plot (Rd)##
@@ -985,15 +1020,19 @@ cld <- as.data.frame.list(cld$`site:timepoint`)
 TK_Rd$cld <- cld$Letters
 
 #Adding significance letters to plot
-Rd_fig1 <- Rd_fig + geom_text(data = TK_Rd, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+#For individual plot the spacing of the letters are correct but when merged they get messed up
+Rd_fig2 <- Rd_fig + geom_text(data = TK_Rd, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
                               color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6, 0, 2.25, 0, 3.25, -0.5))
-Rd_fig1
+
+
+Rd_fig1 <- Rd_fig + geom_text(data = TK_Rd, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+                              color = "black", size = 3, fontface= "bold", vjust = -1.5, hjust = c(4, 0, 2, 0, 2.5, 0))
 
 
 ###Configure all univariate functions into one major figure
 
 Fig <- ggarrange(biomass_fig1, host_prot_fig1, Rd_fig1, sym_counts_fig1, Am_fig1, AQY_fig1, tot_chl_cm2_fig1, tot_chl_cell_fig1, ncol = 4, nrow = 2)
-ggsave("Output/Univariate_Figs.pdf", Fig, width=16, height=12)
+ggsave("Output/Univariate_Figs.pdf", Fig, width=24, height=10)
 
 Fig
 
