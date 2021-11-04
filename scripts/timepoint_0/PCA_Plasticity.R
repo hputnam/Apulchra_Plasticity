@@ -31,6 +31,7 @@ PCs.meta <- PCs.meta %>%
 #convert to wide format to enable initial and subsequent comparisons
 PCs.meta.wide <- pivot_wider(PCs.meta, values_from = c(V1, V2), names_from =timepoint)
 
+#Creating PCA Plot from October to January Comparison
 TP1 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   geom_point(aes(), size=2, color="black")+ 
   geom_segment(aes(x=V1_timepoint0, y=V2_timepoint0, xend=V1_timepoint1, yend=V2_timepoint1, color=site))+
@@ -42,6 +43,7 @@ TP1 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   ggtitle("A) January 2020") +
   theme_classic() 
 
+#Creating PCA Plot from October to November Comparison
 TP4 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   geom_point(aes(), size=2, color="black")+ 
   geom_segment(aes(x=V1_timepoint0, y=V2_timepoint0, xend=V1_timepoint4, yend=V2_timepoint4, color=site))+
@@ -53,7 +55,7 @@ TP4 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   ggtitle("B) November 2020") +
   theme_classic() 
 
-Plasticity <- ggarrange(TP1, TP4,  common.legend = TRUE) #failed to read on my local drive through R
+Plasticity <- ggarrange(TP1, TP4,  common.legend = TRUE) 
 ggsave("output/Plasticity_pca.pdf", width = 8, height = 4, units = "in")
 
 
@@ -64,7 +66,8 @@ PCA.dist <- as.data.frame(as.matrix(dist(PCs)))
 #join with metadata
 PCA.dist <- cbind(fac, PCA.dist)
 
-#filter and select to get only the data of interest
+#filter and select to get only the data of interest 
+###NOT SURE IF THIS IS CORRECT FROM HERE ON SINCE CHANGING THE INPUT DATA###
 G15 <- PCA.dist %>%
   filter(Genotype=="Genotype15")
 G15 <- G15[4:nrow(G15),1:5]
@@ -114,7 +117,10 @@ gd <- Plast.Data %>%
   group_by(site, timepoint)%>%
   summarise(mean=mean(Distance))
 
+install.packages('Rcpp')
 
+#Create final plot for Reaction Norms
+###ERROR IN CODE##
 RNorms <- Plast.Data %>%
 ggplot(aes(x=timepoint, y=Distance, fill=site)) +
   geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
