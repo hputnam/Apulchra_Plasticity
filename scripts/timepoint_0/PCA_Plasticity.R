@@ -5,11 +5,12 @@ library(GGally)
 library(lemon)
 
 
+
 # import data
 data<- read.csv("data/complete_timeseries_data_test.csv") #read in file
 
 #check values for outliers
-ggpairs(data[,5:13])
+ggpairs(data[,5:13]) 
 
 #Scale and center datasets
 data_scaled <- scale(data[5:13], center = T, scale = T) # scaled variables
@@ -52,7 +53,7 @@ TP4 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   ggtitle("B) November 2020") +
   theme_classic() 
 
-Plasticity <- ggarrange(TP1, TP4,  common.legend = TRUE)
+Plasticity <- ggarrange(TP1, TP4,  common.legend = TRUE) #failed to read on my local drive through R
 ggsave("output/Plasticity_pca.pdf", width = 8, height = 4, units = "in")
 
 
