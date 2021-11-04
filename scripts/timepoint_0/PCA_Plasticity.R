@@ -204,7 +204,7 @@ gd <- Plast.Data %>%
 
 RNorms <- Plast.Data %>%
 ggplot(aes(x=timepoint, y=Distance, fill=site)) +
-  geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
+  #geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
   lemon::geom_pointpath(aes(colour=site, shape=Genotype,group=interaction(Genotype,site)),
                         position = pj, alpha=0.4)+
   geom_point(aes(colour=site, x=timepoint, y=mean), data=gd, position = pj)+
