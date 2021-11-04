@@ -63,19 +63,31 @@ vegan_data <- scale(pca_data[ ,4:11])
 adonis(vegan_data ~ site*timepoint, data = pca_data, method='eu')
 adonis(vegan_data ~ Genotype, data = pca_data, method='eu')
 
-
-
-
 ##### PLASTICITY #####
 #generate t0 data for each colony to make statistical comparisons
 
-#HERE WE NEED TO CORRECT THE FORMAT TO COPY THE VALUES FOR NURSERY TO EACH SITE
-data<- read.csv("data/complete_timeseries_data.csv") #read in file
+#fill in tp0 data for all colonies
 
-#alter data file here
+#revmoe nursery to make a data frame
+nursery<-data%>%
+  subset(site=="Nursery")%>%
+  droplevels() #isolate nursery values
 
+levels(nursery$site) <- c(levels(nursery$site), "site1", "site2", "site3") #add new site categories
 
+nursery<-nursery%>%
+  group_by(Genotype) %>% 
+  complete(site)%>%
+  fill(everything())%>% #copy information across sites for each genotype
+  filter(!site=="Nursery")%>%
+  droplevels()
 
+data<-data%>%
+  #group_by(Genotype) %>% 
+  #complete(site, timepoint)%>%
+  subset(!site=="Nursery")%>%
+  full_join(., nursery)%>% #merge with nursery to create full dataframe
+  arrange(., Genotype, timepoint)
 
 #Scale and center datasets
 data_scaled <- scale(data[4:11], center = T, scale = T) # scaled variables
@@ -96,25 +108,13 @@ PCs.meta <- cbind(fac, PCs)
 #convert to wide format to enable initial and subsequent comparisons
 PCs.meta.wide <- pivot_wider(PCs.meta, values_from = c(V1, V2), names_from =timepoint)
 
-
-
-#TEMPORARY FIX FOR NURSERY FORMAT - WILL DELETE AFTER ABOVE ISSUE IS FIXED FOR COPYING NURSERY VALUES
-PCs.meta.wide%>%write_csv("data/pcs_meta_wide.csv")
-
-#manually copied nursery values to timepoint 0 for all genotypes
-PCs.meta.wide<-read.csv("data/pcs_meta_wide.csv")
-
-
-
-
-
 #Creating PCA Plot from October to January Comparison
 TP1 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   geom_point(aes(), size=2, color="black")+ 
   geom_segment(aes(x=V1_timepoint0, y=V2_timepoint0, xend=V1_timepoint1, yend=V2_timepoint1, color=site))+
   facet_wrap(~Genotype)+
-  xlim(-4,5)+
-  ylim(-4,5)+
+  xlim(-6,5)+
+  ylim(-6,5)+
   xlab(label = "PC1")+
   ylab(label = "PC2")+
   ggtitle("A) January 2020") +
@@ -125,8 +125,8 @@ TP4 <- ggplot(PCs.meta.wide,aes(x=V1_timepoint0,y=V2_timepoint0))+
   geom_point(aes(), size=2, color="black")+ 
   geom_segment(aes(x=V1_timepoint0, y=V2_timepoint0, xend=V1_timepoint4, yend=V2_timepoint4, color=site))+
   facet_wrap(~Genotype)+
-  xlim(-4,5)+
-  ylim(-4,5)+
+  xlim(-6,5)+
+  ylim(-6,5)+
   xlab(label = "PC1")+
   ylab(label = "PC2")+
   ggtitle("B) November 2020") +
@@ -141,15 +141,12 @@ ggsave("output/Plasticity_pca.pdf", width = 8, height = 4, units = "in")
 
 PCA.dist <- as.data.frame(as.matrix(dist(PCs)))
 
-
-
 #convert PCs.meta.wide back to long format (this is to fix the formatting issues where we want to replicate nursery values)  - AH come back to this after the nursery values can be copied in the code
 
 #join with metadata
 PCA.dist <- cbind(fac, PCA.dist)
 
 #filter and select to get only the data of interest 
-###NOT SURE IF THIS IS CORRECT FROM HERE ON SINCE CHANGING THE INPUT DATA###
 G15 <- PCA.dist %>%
   filter(Genotype=="Genotype15")
 G15 <- G15[4:nrow(G15),1:5]
@@ -203,18 +200,15 @@ gd <- Plast.Data %>%
   group_by(site, timepoint)%>%
   summarise(mean=mean(Distance))
 
-#install.packages('Rcpp')
-#library(Rcpp)
-
 #Create final plot for Reaction Norms
-###ERROR IN CODE - say my split_indices function is not provided by Rcpp function##
+
 RNorms <- Plast.Data %>%
 ggplot(aes(x=timepoint, y=Distance, fill=site)) +
   geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
   lemon::geom_pointpath(aes(colour=site, shape=Genotype,group=interaction(Genotype,site)),
                         position = pj, alpha=0.4)+
-  geom_point(aes(colour=site, x=timepoint, y=mean), data=gd)+
-  geom_line(aes(colour=site, group=site, x=timepoint, y=mean), data=gd, size=1, alpha=1)+
+  geom_point(aes(colour=site, x=timepoint, y=mean), data=gd, position = pj)+
+  geom_line(aes(colour=site, group=site, x=timepoint, y=mean), data=gd, size=1, alpha=1, position = pj)+
   theme_classic(); RNorms 
 
 Plasticity <- ggarrange(RNorms,  common.legend = F)
