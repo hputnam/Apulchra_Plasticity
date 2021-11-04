@@ -118,9 +118,10 @@ gd <- Plast.Data %>%
   summarise(mean=mean(Distance))
 
 install.packages('Rcpp')
+library(Rcpp)
 
 #Create final plot for Reaction Norms
-###ERROR IN CODE##
+###ERROR IN CODE - say my split_indices function is not provided by Rcpp function##
 RNorms <- Plast.Data %>%
 ggplot(aes(x=timepoint, y=Distance, fill=site)) +
   geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
