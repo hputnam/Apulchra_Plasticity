@@ -6,6 +6,7 @@ library(lemon)
 library(vegan)
 library(ggfortify)
 library(ggplot2)
+library(plotrix)
 
 ##### IMPORT DATA ##### 
 
@@ -21,6 +22,8 @@ data%>%
   ggpairs(., columns=4:11) 
 
 ##### MAKING PCAs #####  
+
+set.seed(11)
 
 #preparing dataset for making a PCA and performing a PERMANOVA
 pca_data<-data[complete.cases(data), ]
@@ -57,43 +60,47 @@ pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="timepo
 
 #test with PERMANOVA
 # scale data
-vegan_data <- scale(pca_data[ ,4:11])
+vegan_data <- scale(pca_data[ ,4:11],center = TRUE, scale = TRUE)
 
 # PerMANOVA - partitioning the euclidean distance matrix by species
-adonis(vegan_data ~ site*timepoint, data = pca_data, method='eu')
-adonis(vegan_data ~ Genotype, data = pca_data, method='eu')
+PRMNOVA <- adonis(vegan_data ~ site*timepoint, data = pca_data, method='eu')
+PRMNOVA
 
 ##### PLASTICITY #####
 #generate t0 data for each colony to make statistical comparisons
 
 #fill in tp0 data for all colonies
 
-#revmoe nursery to make a data frame
-nursery<-data%>%
-  subset(site=="Nursery")%>%
-  droplevels() #isolate nursery values
+# #revmoe nursery to make a data frame
+# nursery<-data%>%
+#   subset(site=="Nursery")%>%
+#   droplevels() #isolate nursery values
+# 
+# levels(nursery$site) <- c(levels(nursery$site), "site1", "site2", "site3") #add new site categories
+# 
+# nursery<-nursery%>%
+#   group_by(Genotype) %>% 
+#   complete(site)%>%
+#   fill(everything())%>% #copy information across sites for each genotype
+#   filter(!site=="Nursery")%>%
+#   droplevels()
 
-levels(nursery$site) <- c(levels(nursery$site), "site1", "site2", "site3") #add new site categories
+data1<-data%>%
+  subset(!site=="Nursery")
 
-nursery<-nursery%>%
-  group_by(Genotype) %>% 
-  complete(site)%>%
-  fill(everything())%>% #copy information across sites for each genotype
-  filter(!site=="Nursery")%>%
-  droplevels()
+#replicate the first 4 rows, 3 times each
+data_new_2 <- data %>% slice(rep(1:4, each = 3)) 
 
-data<-data%>%
-  #group_by(Genotype) %>% 
-  #complete(site, timepoint)%>%
-  subset(!site=="Nursery")%>%
-  full_join(., nursery)%>% #merge with nursery to create full dataframe
-  arrange(., Genotype, timepoint)
+data_new_2 <- data_new_2 %>%
+  mutate(site=c("site1", "site2", "site3","site1", "site2", "site3","site1", "site2", "site3","site1", "site2", "site3"))
+
+data_new_2 <- rbind(data_new_2, data1)
 
 #Scale and center datasets
-data_scaled <- scale(data[4:11], center = T, scale = T) # scaled variables
+data_scaled <- scale(data_new_2[4:11], center = T, scale = T) # scaled variables
 
 #Identify Factors 
-fac <- data[1:3]
+fac <- data_new_2[1:3]
 
 # PCA of all variables
 pca.out <- prcomp(data_scaled, center=FALSE, scale=FALSE) #run PCA
@@ -193,12 +200,13 @@ kruskal.test(Distance ~ timepoint, data=Plast.Data)
 
 pj <- position_jitterdodge(jitter.width=0.05, seed=9,
                            jitter.height = 0,
-                           dodge.width = 0.75)
+                           dodge.width = 0.3)
 
 #create group mean dataset 
 gd <- Plast.Data %>%
   group_by(site, timepoint)%>%
-  summarise(mean=mean(Distance))
+  summarise(mean=mean(Distance),
+            sem=std.error(Distance))
 
 #Create final plot for Reaction Norms
 
@@ -207,8 +215,9 @@ ggplot(aes(x=timepoint, y=Distance, fill=site)) +
   #geom_boxplot(outlier.colour = NA, width =0.75, alpha=0.2) +
   lemon::geom_pointpath(aes(colour=site, shape=Genotype,group=interaction(Genotype,site)),
                         position = pj, alpha=0.4)+
-  geom_point(aes(colour=site, x=timepoint, y=mean), data=gd, position = pj)+
+  geom_point(aes(colour=site, x=timepoint, y=mean), data=gd, position = pj, size=2)+
   geom_line(aes(colour=site, group=site, x=timepoint, y=mean), data=gd, size=1, alpha=1, position = pj)+
+  geom_errorbar(aes(y=mean, ymin = mean-sem, ymax = mean+sem), data=gd, position = pj, width = 0)+
   theme_classic(); RNorms 
 
 Plasticity <- ggarrange(RNorms,  common.legend = F)

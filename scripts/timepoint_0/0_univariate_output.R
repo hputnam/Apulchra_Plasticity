@@ -4,7 +4,10 @@ library(ggpubr)
 library(showtext)
 library(dplyr)
 library(multcompView)
+library(RColorBrewer)
 
+
+# Analysis of Timepoint 0 samples from Nursery, naturally site 1 and site 2
 ####NURSERY VS WILD SITES TP0 ____________________________________________________________
 #reading in all data files for TP0 (not filtered for genotypes)
 biomass_TP0 <- read.csv("output/0_biomass.csv")
@@ -81,7 +84,7 @@ TP0_metadata <- TP0_metadata %>%
 TP0_metadata <- TP0_metadata %>%
   select(colony_id, site, timepoint, AFDW.mg.cm2, host_prot_ug.cm2, sym_prot_ug.cm2, total_chl.ug.cm2, total_chl.ug.cell, Am, AQY, Rd, cells.cm2) #%>% #selecting the six metrics wanting to output
   
-TP0_metadata <- TP0_metadata %>% #writing output of metadata for TP0 (all nursery - n=10 and wild sites n=3 per site)
+TP0_metadata %>% #writing output of metadata for TP0 (all nursery - n=10 and wild sites n=3 per site)
   write.csv("output/TP0_metadata")
   
 #Individually create plots and save them before compiling into one large output plot
@@ -92,6 +95,7 @@ AFDW_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = AFDW.mg.cm2, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
   ylim(0, 3.5) +
+  ylab("mg/cm2") +
   ggtitle("Ash Free Dry Weight (mg/cm2)") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) + # Plot all points
@@ -119,6 +123,7 @@ Host_Prot_TP0 <- TP0_metadata %>%
   labs(x = "Site", y = "", color = "Site") +
   ggtitle("Host Protein (ug/cm2)") +
   ylim(0, 400) +
+  ylab("µg/cm2") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) + # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -159,6 +164,7 @@ Tot_CHL.cm2_TP0 <- TP0_metadata %>%
   labs(x = "Site", y = "", color = "Site") +
   ggtitle("Total Chlorophyll per Fragment (ug/cm2)") +
   ylim(0, 12) +
+  ylab("µg/cm2") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -184,6 +190,7 @@ Tot_CHL.cell_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = total_chl.ug.cell, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
   ylim(0, 2.5e-05) +
+  ylab("µg/cell") +
   ggtitle("Total Chlorophyll per Symbiont (ug/cell)") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
@@ -211,6 +218,7 @@ sym_dens_TP0 <- TP0_metadata %>%
   labs(x = "Site", y = "", color = "Site") +
   scale_y_continuous(labels = scales::scientific) +
   ggtitle("Symbiont Density (cells/cm2)") +
+  ylab("cells/cm2") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -236,6 +244,7 @@ Am_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = Am, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
   ggtitle("Max Photosynthesis (Am)") +
+  ylab("µmol/cm2/h") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -260,7 +269,7 @@ Am_TP0
 AQY_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = AQY, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Max Photosynthetic Rate (AQY)") +
+  ggtitle("alpha (AQY)") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -287,6 +296,7 @@ Rd_TP0 <- TP0_metadata %>%
   ggplot(aes(x = site, y = Rd, color = site)) +
   labs(x = "Site", y = "", color = "Site") +
   ggtitle("Respiration Rate (Rd)") +
+  ylab("µmol/cm2/h") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_jitter(width = 0.1) +                                            # Plot all points
   stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
@@ -315,22 +325,92 @@ TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0, Rd_TP0, sym_dens_TP0, Am_TP0, AQY_T
 ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=16, height=12)
 
 #STATS on all
-model1 <- aov(log10(AFDW.mg.cm2) ~ site, data = TP0_metadata) #save model for biomass
-model2 <- aov(log10(host_prot_ug.cm2) ~ site, data = TP0_metadata) #save model for Host Prot
-model3 <- aov(log10(cells.cm2) ~ site, data = TP0_metadata) #save model for Sym Density
-model4 <- aov(log10(total_chl.ug.cm2) ~ site, data = TP0_metadata) #save model for Total Chl/cell
-model5 <- aov(log10(total_chl.ug.cell) ~ site, data = TP0_metadata) #save model for Total Chl/cm2
-model6 <- aov(log10(Am) ~ site, data = TP0_metadata) #save model for Total Chl/cm2
-model7 <- aov(log10(AQY) ~ site, data = TP0_metadata) #save model for Total Chl/cm2
-model8 <- aov(log10(Rd) ~ site, data = TP0_metadata) #save model for Total Chl/cm2
+#Biomass__________________________________________
+model.AFDW <- aov(log10(AFDW.mg.cm2) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.AFDW$residuals)
+qqnorm(model.AFDW$residuals)
+qqline(model.AFDW$residuals)
+plot(model.AFDW$fitted.values, model.AFDW$residuals)
+biomass_anova<-summary(model.AFDW) #anova for biomass
+biomass_tkyhsd<-TukeyHSD(model.AFDW) #posthoc tests within anova for biomass
+
+#Host Protein ________________________________
+model.HostProt <- aov(log10(host_prot_ug.cm2) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.HostProt$residuals)
+qqnorm(model.HostProt$residuals)
+qqline(model.HostProt$residuals)
+plot(model.HostProt$fitted.values, model.HostProt$residuals)
+host_prot_anova<-anova(model.HostProt) #anova for biomass
+host_prot_tkyhsd<-TukeyHSD(model.HostProt) #posthoc tests within anova for biomass
+
+#Sym Density______________________________________
+model.CellDens <- aov(log10(cells.cm2) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.CellDens$residuals)
+qqnorm(model.CellDens$residuals)
+qqline(model.CellDens$residuals)
+plot(model.CellDens$fitted.values, model.CellDens$residuals)
+sym_dens_anova<-anova(model.CellDens) #anova for Sym Density
+sym_dens_tkyhsd<-TukeyHSD(model.CellDens) #posthoc tests within anova for Sym Density
 
 
-#ANOVA on all of them with TukeyHSD Posthoc tests
+#Total Chlorophyll per Frag (ug/cm2)_______________
+model.Chlcm <- aov(log10(total_chl.ug.cm2) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.Chlcm$residuals)
+qqnorm(model.Chlcm$residuals)
+qqline(model.Chlcm$residuals)
+plot(model.Chlcm$fitted.values, model.Chlcm$residuals)
+tot_chl_anova<-anova(model.Chlcm) #anova for Total Chl
+tot_chl_tkyhsd<-TukeyHSD(model.Chlcm) #posthoc tests within anova for Total Chl
+
+
+#Total Chlorophyll per cell (ug/cells)____________
+model.Chl.cell <- aov(log10(total_chl.ug.cell) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.Chl.cell$residuals)
+qqnorm(model.Chl.cell$residuals)
+qqline(model.Chl.cell$residuals)
+plot(model.Chl.cell$fitted.values, model.Chl.cell$residuals)
+tot_chl_per.cell_anova<-anova(model.Chl.cell) #anova for Total Chl per cell
+tot_chl_per.cell_tkyhsd<-TukeyHSD(model.Chl.cell) #posthoc tests within anova for Total Chl per cell
+
+#Am (Max Photosynthesis)____________
+model.Am <- aov(log10(Am) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.Am$residuals)
+qqnorm(model.Am$residuals)
+qqline(model.Am$residuals)
+plot(model.Am$fitted.values, model.Chl.cell$residuals)
+Am_anova<-anova(model.Am) #anova for Am
+Am_tkyhsd<-TukeyHSD(model.Am) #posthoc tests within anova for Am
+
+#AQY (Max Photosynthetic Rate)____________
+model.AQY <- aov(log10(AQY) ~ site, data = TP0_metadata) #save model 
+par(mfrow=c(1,3))
+hist(model.AQY$residuals)
+qqnorm(model.AQY$residuals)
+qqline(model.AQY$residuals)
+plot(model.AQY$fitted.values, model.Chl.cell$residuals)
+AQY_anova<-anova(model.AQY) #anova for AQY
+AQY_tkyhsd<-TukeyHSD(model.AQY) #posthoc tests within anova for AQY
+
+#Rd (Respiration Rate)____________
+model.Rd <- aov(log10(Rd) ~ site, data = TP0_metadata) #save model
+par(mfrow=c(1,3))
+hist(model.Rd$residuals)
+qqnorm(model.Rd$residuals)
+qqline(model.Rd$residuals)
+plot(model.Rd$fitted.values, model.Chl.cell$residuals)
+Rd_anova<-anova(model.Rd) #anova for Rd
+Rd_tkyhsd<-TukeyHSD(model.Rd) #posthoc tests within anova for Rd
+
+
+#ANOVA on all variables and TukeyHSD Posthoc tests
 
 #Biomass__________________________________________
-biomass_anova<-anova(model1) #anova for biomass
-biomass_tkyhsd<-TukeyHSD(model1) #posthoc tests within anova for biomass
-
 # Concatenate ANOVA results in txt file (AFDW)
 cat("A) ANOVA results of AFDW (mg/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(biomass_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -342,9 +422,6 @@ capture.output(biomass_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOV
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 #Host Protein Stats________________________________
-host_prot_anova<-anova(model2) #anova for biomass
-host_prot_tkyhsd<-TukeyHSD(model2) #posthoc tests within anova for biomass
-
 ## Concatenate ANOVA results in txt file (Host Protein)
 cat("B) ANOVA results of Host Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(host_prot_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -355,26 +432,7 @@ cat("B) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites\n", file = "outpu
 capture.output(host_prot_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
-#Sym Protein______________________________________
-#Did not end up using since only host prot run on timeseries data down the line
-#sym_prot_anova<-anova(model3) #anova for biomass
-#sym_prot_tkyhsd<-TukeyHSD(model3) #posthoc tests within anova for biomass
-
-## Concatenate ANOVA results in txt file (Sym Protein)
-#cat("C) ANOVA results of Symbiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-#capture.output(sym_prot_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-#cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-## Concatenate TukeyHSD results in txt file (Sym Protein)
-#cat("C) TukeyHSD results of Symbiont Protein (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-#capture.output(sym_prot_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-#cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-
-
 #Sym Density______________________________________
-sym_dens_anova<-anova(model4) #anova for Sym Density
-sym_dens_tkyhsd<-TukeyHSD(model1) #posthoc tests within anova for Sym Density
-
 ## Concatenate ANOVA results in txt file (Sym Density)
 cat("C) ANOVA results of Symbiont Density (cells/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(sym_dens_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -400,11 +458,7 @@ cat("D) TukeyHSD results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites
 capture.output(tot_chl_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
-
 #Total Chlorophyll per cell (ug/cells)____________
-tot_chl_per.cell_anova<-anova(model6) #anova for Total Chl per cell
-tot_chl_per.cell_tkyhsd<-TukeyHSD(model6) #posthoc tests within anova for Total Chl per cell
-
 ## Concatenate ANOVA results in txt file (Total CHL per cell)
 cat("E) ANOVA results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(tot_chl_per.cell_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -415,11 +469,7 @@ cat("E) TukeyHSD results of Total Chlorophyll per Symbiont (ug/cell) at TP0 site
 capture.output(tot_chl_per.cell_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
-
 #Am (Max Photosynthesis)____________
-Am_anova<-anova(model6) #anova for Am
-Am_tkyhsd<-TukeyHSD(model6) #posthoc tests within anova for Am
-
 ## Concatenate ANOVA results in txt file (Max Photosynthesis)
 cat("F) ANOVA results of Max Photosynthesis Levels at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(Am_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -430,11 +480,7 @@ cat("F) TukeyHSD results of Max Photosynthesis Levels at TP0 sites\n", file = "o
 capture.output(Am_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
-
 #AQY (Max Photosynthetic Rate)____________
-AQY_anova<-anova(model7) #anova for AQY
-AQY_tkyhsd<-TukeyHSD(model7) #posthoc tests within anova for AQY
-
 ## Concatenate ANOVA results in txt file (Max Photosynthetic Rate)
 cat("G) ANOVA results of Max Photosynthetic Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(AQY_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -446,9 +492,6 @@ capture.output(AQY_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HS
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 #Rd (Respiration Rate)____________
-Rd_anova<-anova(model8) #anova for Rd
-Rd_tkyhsd<-TukeyHSD(model8) #posthoc tests within anova for Rd
-
 ## Concatenate ANOVA results in txt file (Respiration Rate)
 cat("H) ANOVA results of Respiration Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(AQY_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -461,13 +504,16 @@ cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append 
 
 
 
+
+
+
+########################################
 #______________________________________________________________________________________________
-#CREATING TIMESERIES METADATA AND FIGS
+## TIMESERIES ANALYSIS
 ## METADATA FILE CREATION
-#Creating Metadata of all metrics from TP0 for the 4 genotypes going to be compared with the rest of the timeseries
+##Combining dataset of all metrics from TP0 for the 4 genotypes going to be compared with the rest of the timeseries
 
-
-#manual way to merge it
+# merge response variables into dataframe
 biomass <- read.csv("output/0_biomass_4geno.csv")
 biomass <- biomass %>% 
   mutate_at("colony_id", str_replace, "_", "-")
@@ -496,7 +542,7 @@ Rd <- read.csv("output/0_Rd_4geno.csv")
 Rd <- Rd %>% 
   mutate_at("colony_id", str_replace, "_", "-")
 
-#All the individual merges
+#Merge all variables
 geno <- full_join(biomass, chla)
 geno <- full_join(geno, chlc)
 geno <- full_join(geno, holo_prot)
@@ -511,35 +557,30 @@ geno_metadata <- geno %>%
   mutate_at("colony_id", str_replace, "Apul", "ACR")
 
 #Edit the current metadata sheet to match the current timeseries metadata
+#calculate total Chl per cm2
 geno_metadata <- geno_metadata %>%
   mutate(Genotype = genotype) %>%
   mutate(site = "Nursery") %>%
   mutate(tot_chl.ug.cm2 = geno_metadata$chla.ug.cm2 + geno_metadata$chlc2.ug.cm2) %>%
   select(colony_id, Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, tot_chl.ug.cm2, Am, AQY, Rd, cells.cm2)
 
-  
+#calculate total Chl per symbiont cell 
 geno_metadata <- geno_metadata %>%
   mutate(tot_chl.ug.cell = geno_metadata$tot_chl.ug.cm2 / geno_metadata$cells.cm2) %>%
   select(Genotype, timepoint, site, AFDW.mg.cm2, host_prot_ug.cm2, tot_chl.ug.cm2, tot_chl.ug.cell, Am, AQY, Rd, cells.cm2)
 
-
-######
-#START WORKIGN HERE
-#####
-
-###Compiled data from Jan/Nov has host and sym AFDW separated while we have it as one big thing, it is also missing protein.
-##Need to create new column in data that is Holobiont AFDW
 # colony_id, Genotype, timepoint, month, nutrient, site_code
-timeseries_data <- read.csv("data/conetta_data.csv") #raw output file from Ariana
+timeseries_data <- read.csv("data/conetta_data.csv") #raw output file from broader E5 timeseries
+#https://github.com/urol-e5/timeseries
+timeseries_data <- timeseries_data[,-c(1,3)]
+
+
 coral_geno <- read.csv("data/data_jan_nov_SA.csv") #edited csv file that Hollie and I made 
 
 coral_geno <- coral_geno %>% 
-  mutate(colony_id = �..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
+  mutate(colony_id = ?..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
   select(colony_id, Genotype, timepoint) #only selecting these columns to fit output data to timepoint 1 and 4
-
-
-# %>% #creating a site column
-                      
+               
 timeseries_data1 <- right_join(timeseries_data, coral_geno) #joining the data to each other by the Genotype info
 
 #change to conetta_data.csv and then filter timepoints 2 and 3 out
@@ -591,9 +632,12 @@ Apul_Plast_Metadata <- rbind(geno_metadata, timeseries_data3) #Combined and fina
 Apul_Plast_Metadata <- Apul_Plast_Metadata %>%
   write_csv(path = "data/complete_timeseries_data.csv")
 
+Apul_Plast_Metadata_noTP0  <- Apul_Plast_Metadata %>%
+  filter(!timepoint=="timepoint0")
 
-####UNIVARIATE Figures and Analysis ---- BIOMASS
-library(RColorBrewer)
+
+####UNIVARIATE Timeseries Figures
+
 ##Plot Biomass##
 
 #Subset full data set for just biomass data
@@ -623,7 +667,7 @@ biomass_fig
 
 #adding significance bars for the tukeyhsd values 
 #getting the significance values from the ANOVA and TUKEY which are represented by a different letter
-cld_AFDW <- multcompLetters4(AFDW_stats, Tukey_AFDW) 
+cld_AFDW <- multcompLetters4(aov(log10(AFDW.mg.cm2) ~ site, data = TP0_metadata), TukeyHSD(model.AFDW)) 
 print(cld_AFDW) #printing these values to look at them
 
 #summarising by site and time point
@@ -638,7 +682,7 @@ TK_AFDW$cld <- cld_AFDW$Letters
 
 #Adding significance letters to plot
 #Spacing of significance letters for single plots 
-biomass_fig2 <- biomass_fig + geom_text(data = TK_AFDW, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld),
+biomass_fig2 <- biomass_fig + geom_text(data = TK_AFDW, aes (x=site, y=quant, group=interaction(site, timepoint), label=cld_AFDW),
                                                 color = "black", size = 5, fontface= "bold", vjust = -1, hjust = c(6.75, -0.5, 6.75, -0.5, 6.75, -0.5))
 biomass_fig2
 
