@@ -444,10 +444,6 @@ capture.output(sym_dens_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANO
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 
-#Total Chlorophyll per Frag (ug/cm2)_______________
-tot_chl_anova<-anova(model5) #anova for Total Chl
-tot_chl_tkyhsd<-TukeyHSD(model5) #posthoc tests within anova for Total Chl
-
 ## Concatenate ANOVA results in txt file (Total CHL per Frag)
 cat("D) ANOVA results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 capture.output(tot_chl_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
@@ -494,12 +490,12 @@ cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append 
 #Rd (Respiration Rate)____________
 ## Concatenate ANOVA results in txt file (Respiration Rate)
 cat("H) ANOVA results of Respiration Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(AQY_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(Rd_anova, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 ## Concatenate TukeyHSD results in txt file (Respiration Rate)
 cat("H) TukeyHSD results of Respiration Rate at TP0 sites\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
-capture.output(AQY_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
+capture.output(Rd_tkyhsd, file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 cat("\n\n", file = "output/Table_TP0_Univariates.vs.Site_ANOVA_HSD.txt", append = TRUE)
 
 

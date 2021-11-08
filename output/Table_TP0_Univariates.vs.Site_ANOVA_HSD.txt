@@ -1,197 +1,9 @@
 A) ANOVA results of AFDW (mg/cm2) at TP0 sites
-Analysis of Variance Table
-
-Response: log10(AFDW.mg.cm2)
-          Df  Sum Sq  Mean Sq F value  Pr(>F)   
-site       2 0.25615 0.128077  11.505 0.00133 **
-Residuals 13 0.14472 0.011133                   
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-A) TukeyHSD results of AFDW (mg/cm2) at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(AFDW.mg.cm2) ~ site, data = TP0_metadata)
-
-$site
-                    diff          lwr        upr     p adj
-site1-nursery  0.3136385  0.130244026 0.49703306 0.0015647
-site2-nursery  0.1817304 -0.001664124 0.36512491 0.0522102
-site2-site1   -0.1319082 -0.359381056 0.09556475 0.3091609
-
-
-
-B) ANOVA results of Host Protein (ug/cm2) at TP0 sites
-Analysis of Variance Table
-
-Response: log10(host_prot_ug.cm2)
-          Df  Sum Sq Mean Sq F value    Pr(>F)    
-site       2 0.47925 0.23963  17.684 0.0001954 ***
-Residuals 13 0.17615 0.01355                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-B) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(host_prot_ug.cm2) ~ site, data = TP0_metadata)
-
-$site
-                    diff         lwr       upr     p adj
-site1-nursery  0.4093049  0.20697595 0.6116338 0.0003669
-site2-nursery  0.2894106  0.08708163 0.4917395 0.0060748
-site2-site1   -0.1198943 -0.37085248 0.1310639 0.4402697
-
-
-
-C) ANOVA results of Symbiont Density (cells/cm2) at TP0 sites
-Analysis of Variance Table
-
-Response: log10(total_chl.ug.cm2)
-          Df  Sum Sq Mean Sq F value    Pr(>F)    
-site       2 0.96629 0.48314  36.524 4.622e-06 ***
-Residuals 13 0.17197 0.01323                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-C) TukeyHSD results of Symbiont Density (cells/cm2) at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(AFDW.mg.cm2) ~ site, data = TP0_metadata)
-
-$site
-                    diff          lwr        upr     p adj
-site1-nursery  0.3136385  0.130244026 0.49703306 0.0015647
-site2-nursery  0.1817304 -0.001664124 0.36512491 0.0522102
-site2-site1   -0.1319082 -0.359381056 0.09556475 0.3091609
-
-
-
-D) ANOVA results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites
-Analysis of Variance Table
-
-Response: log10(total_chl.ug.cell)
-          Df  Sum Sq  Mean Sq F value    Pr(>F)    
-site       2 0.35859 0.179297  15.642 0.0003467 ***
-Residuals 13 0.14901 0.011462                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-D) TukeyHSD results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(total_chl.ug.cell) ~ site, data = TP0_metadata)
-
-$site
-                    diff         lwr         upr     p adj
-site1-nursery  0.3939998  0.20790885  0.58009084 0.0002409
-site2-nursery  0.1030174 -0.08307355  0.28910844 0.3401667
-site2-site1   -0.2909824 -0.52179988 -0.06016493 0.0140271
-
-
-
-E) ANOVA results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites
-Analysis of Variance Table
-
-Response: log10(Am)
-          Df Sum Sq Mean Sq F value   Pr(>F)   
-site       2 1.1137 0.55686   6.779 0.009624 **
-Residuals 13 1.0679 0.08214                    
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-E) TukeyHSD results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(Am) ~ site, data = TP0_metadata)
-
-$site
-                     diff          lwr       upr     p adj
-site1-nursery  0.58484849  0.086681029 1.0830160 0.0214922
-site2-nursery  0.49975953  0.001592072 0.9979270 0.0492429
-site2-site1   -0.08508896 -0.702989647 0.5328117 0.9301011
-
-
-
-F) ANOVA results of Max Photosynthesis Levels at TP0 sites
-Analysis of Variance Table
-
-Response: log10(Am)
-          Df Sum Sq Mean Sq F value   Pr(>F)   
-site       2 1.1137 0.55686   6.779 0.009624 **
-Residuals 13 1.0679 0.08214                    
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-F) TukeyHSD results of Max Photosynthesis Levels at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(Am) ~ site, data = TP0_metadata)
-
-$site
-                     diff          lwr       upr     p adj
-site1-nursery  0.58484849  0.086681029 1.0830160 0.0214922
-site2-nursery  0.49975953  0.001592072 0.9979270 0.0492429
-site2-site1   -0.08508896 -0.702989647 0.5328117 0.9301011
-
-
-
-G) ANOVA results of Max Photosynthetic Rate at TP0 sites
-Analysis of Variance Table
-
-Response: log10(AQY)
-          Df  Sum Sq  Mean Sq F value Pr(>F)
-site       2 0.16379 0.081897  2.2249 0.1476
-Residuals 13 0.47851 0.036809               
-
-G) TukeyHSD results of Max Photosynthetic Rate at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(AQY) ~ site, data = TP0_metadata)
-
-$site
-                     diff        lwr       upr     p adj
-site1-nursery  0.23744546 -0.0960293 0.5709202 0.1836151
-site2-nursery  0.17235228 -0.1611225 0.5058270 0.3867718
-site2-site1   -0.06509319 -0.4787177 0.3485314 0.9098575
-
-
-
-H) ANOVA results of Respiration Rate at TP0 sites
-Analysis of Variance Table
-
-Response: log10(AQY)
-          Df  Sum Sq  Mean Sq F value Pr(>F)
-site       2 0.16379 0.081897  2.2249 0.1476
-Residuals 13 0.47851 0.036809               
-
-H) TukeyHSD results of Respiration Rate at TP0 sites
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
-
-Fit: aov(formula = log10(AQY) ~ site, data = TP0_metadata)
-
-$site
-                     diff        lwr       upr     p adj
-site1-nursery  0.23744546 -0.0960293 0.5709202 0.1836151
-site2-nursery  0.17235228 -0.1611225 0.5058270 0.3867718
-site2-site1   -0.06509319 -0.4787177 0.3485314 0.9098575
-
-
-
-A) ANOVA results of AFDW (mg/cm2) at TP0 sites
             Df Sum Sq Mean Sq F value  Pr(>F)   
 site         2 0.2561 0.12808   11.51 0.00133 **
 Residuals   13 0.1447 0.01113                   
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 A) TukeyHSD results of AFDW (mg/cm2) at TP0 sites
   Tukey multiple comparisons of means
@@ -215,7 +27,7 @@ Response: log10(host_prot_ug.cm2)
 site       2 0.47925 0.23963  17.684 0.0001954 ***
 Residuals 13 0.17615 0.01355                      
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 B) TukeyHSD results of Host Protein (ug/cm2) at TP0 sites
   Tukey multiple comparisons of means
@@ -239,7 +51,7 @@ Response: log10(cells.cm2)
 site       2 0.15475 0.077377  3.7739 0.05101 .
 Residuals 13 0.26654 0.020503                  
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 C) TukeyHSD results of Symbiont Density (cells/cm2) at TP0 sites
   Tukey multiple comparisons of means
@@ -263,7 +75,7 @@ Response: log10(total_chl.ug.cm2)
 site       2 0.96629 0.48314  36.524 4.622e-06 ***
 Residuals 13 0.17197 0.01323                      
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 D) TukeyHSD results of Total Chlorophyll per Fragment (ug/cm2) at TP0 sites
   Tukey multiple comparisons of means
@@ -287,7 +99,7 @@ Response: log10(total_chl.ug.cell)
 site       2 0.35859 0.179297  15.642 0.0003467 ***
 Residuals 13 0.14901 0.011462                      
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 E) TukeyHSD results of Total Chlorophyll per Symbiont (ug/cell) at TP0 sites
   Tukey multiple comparisons of means
@@ -311,7 +123,7 @@ Response: log10(Am)
 site       2 1.1137 0.55686   6.779 0.009624 **
 Residuals 13 1.0679 0.08214                    
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 F) TukeyHSD results of Max Photosynthesis Levels at TP0 sites
   Tukey multiple comparisons of means
@@ -330,48 +142,46 @@ site2-site1   -0.08508896 -0.702989647 0.5328117 0.9301011
 G) ANOVA results of Max Photosynthetic Rate at TP0 sites
 Analysis of Variance Table
 
-Response: AQY
-          Df     Sum Sq    Mean Sq F value  Pr(>F)  
-site       2 3.7753e-06 1.8876e-06  2.7854 0.09846 .
-Residuals 13 8.8101e-06 6.7770e-07                  
----
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Response: log10(AQY)
+          Df  Sum Sq  Mean Sq F value Pr(>F)
+site       2 0.16379 0.081897  2.2249 0.1476
+Residuals 13 0.47851 0.036809               
 
 G) TukeyHSD results of Max Photosynthetic Rate at TP0 sites
   Tukey multiple comparisons of means
     95% family-wise confidence level
 
-Fit: aov(formula = AQY ~ site, data = TP0_metadata)
+Fit: aov(formula = log10(AQY) ~ site, data = TP0_metadata)
 
 $site
-                       diff           lwr         upr     p adj
-site1-nursery  0.0011614464 -0.0002694413 0.002592334 0.1194642
-site2-nursery  0.0007892858 -0.0006416019 0.002220173 0.3425824
-site2-site1   -0.0003721606 -0.0021469584 0.001402637 0.8464234
+                     diff        lwr       upr     p adj
+site1-nursery  0.23744546 -0.0960293 0.5709202 0.1836151
+site2-nursery  0.17235228 -0.1611225 0.5058270 0.3867718
+site2-site1   -0.06509319 -0.4787177 0.3485314 0.9098575
 
 
 
 H) ANOVA results of Respiration Rate at TP0 sites
 Analysis of Variance Table
 
-Response: AQY
-          Df     Sum Sq    Mean Sq F value  Pr(>F)  
-site       2 3.7753e-06 1.8876e-06  2.7854 0.09846 .
-Residuals 13 8.8101e-06 6.7770e-07                  
+Response: log10(Rd)
+          Df  Sum Sq Mean Sq F value    Pr(>F)    
+site       2 0.84928 0.42464  15.402 0.0003722 ***
+Residuals 13 0.35841 0.02757                      
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 H) TukeyHSD results of Respiration Rate at TP0 sites
   Tukey multiple comparisons of means
     95% family-wise confidence level
 
-Fit: aov(formula = AQY ~ site, data = TP0_metadata)
+Fit: aov(formula = log10(Rd) ~ site, data = TP0_metadata)
 
 $site
-                       diff           lwr         upr     p adj
-site1-nursery  0.0011614464 -0.0002694413 0.002592334 0.1194642
-site2-nursery  0.0007892858 -0.0006416019 0.002220173 0.3425824
-site2-site1   -0.0003721606 -0.0021469584 0.001402637 0.8464234
+                     diff        lwr       upr     p adj
+site1-nursery  0.51065193  0.2220471 0.7992568 0.0011818
+site2-nursery  0.43650156  0.1478967 0.7251064 0.0040637
+site2-site1   -0.07415037 -0.4321207 0.2838199 0.8497979
 
 
 
