@@ -574,7 +574,7 @@ timeseries_data <- timeseries_data[,-c(1,3)]
 coral_geno <- read.csv("data/data_jan_nov_SA.csv") #edited csv file that Hollie and I made 
 
 coral_geno <- coral_geno %>% 
-  mutate(colony_id = ?..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
+  mutate(colony_id = ï..colony_id) %>% #rename the colony id because from mac to Pc it screws up name of first column
   select(colony_id, Genotype, timepoint) #only selecting these columns to fit output data to timepoint 1 and 4
                
 timeseries_data1 <- right_join(timeseries_data, coral_geno) #joining the data to each other by the Genotype info
@@ -1086,49 +1086,85 @@ Apul_Plast_Metadata_noTP0 <- Apul_Plast_Metadata %>%
 
 #BIOMASS (nothing significant)
 AFDW_stats <- aov(AFDW.mg.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(AFDW_stats)
+AFDW_2ANOVA <- summary(AFDW_stats)
 
 Tukey_AFDW <- TukeyHSD(AFDW_stats)
 
 #HOST PROTEIN (site and timepoint individually significant)
 host_prot_stats <- aov(host_prot_ug.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(host_prot_stats)
+host_prot_2ANOVA <-summary(host_prot_stats)
 
 Tukey_Host_Prot <- TukeyHSD(host_prot_stats)
 
 #TOTAL CHL per FRAG - ug/cm2 (site and timepoint individually significant)
 tot_chl_ug.cm2_stats <- aov(tot_chl.ug.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(tot_chl_ug.cm2_stats)
+tot_chl_ug.cm2_2ANOVA<- summary(tot_chl_ug.cm2_stats)
 
 Tukey_CHL.cm2 <- TukeyHSD(tot_chl_ug.cm2_stats)
 
 #TOTAL CHL per SYM - ug/cell (only time point significant)
 tot_chl_ug.cell_stats <- aov(tot_chl.ug.cell ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(tot_chl_ug.cell_stats)
+tot_chl_ug.cell_2ANOVA <- summary(tot_chl_ug.cell_stats)
 
 Tukey_CHL.cell <- TukeyHSD(tot_chl_ug.cell_stats)
 
 #SYM DENSITY cells/cm2 (only time point significant)
 sym_dens_stats <- aov(cells.cm2 ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(sym_dens_stats)
+sym_dens_2ANOVA <- summary(sym_dens_stats)
 
 Tukey_Sym <- TukeyHSD(sym_dens_stats)
 
 #Photosynthetic Maximums Am (nothing significant)
 Am_stats <- aov(Am ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(Am_stats)
+Am_2ANOVA <- summary(Am_stats)
 
 Tukey_Am <- TukeyHSD(Am_stats)
 
 #Max Photosynthetic Rate AQY (nothing significant)
 AQY_stats <- aov(AQY ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(AQY_stats)
+AQY_2ANOVA <- summary(AQY_stats)
 
 Tukey_AQY <- TukeyHSD(AQY_stats)
 
 #Respiration Rates Rd (timepoint significant)
 Rd_stats <- aov(Rd ~site*timepoint, Apul_Plast_Metadata_noTP0)
-summary(Rd_stats)
+Rd_2ANOVA <- summary(Rd_stats)
 
 Tukey_Rd <- TukeyHSD(Rd_stats)
 
+#Concatenate them to output File (ANOVA ONLY)
+
+#Biomass__________________________________________
+# Concatenate ANOVA results in txt file (AFDW)
+cat("A) ANOVA results of AFDW (mg/cm2) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(AFDW_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+# Concatenate TukeyHSD results in txt file (AFDW)
+cat("B) ANOVA results of Host Protein (ug/cm2) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(host_prot_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+cat("C) ANOVA results of Total Chlorophyll per Frag (ug/cm2) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(tot_chl_ug.cm2_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+cat("D) ANOVA results of Total Chlorophyll per Symbiont (ug/cell) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(tot_chl_ug.cell_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+cat("E) ANOVA results of Symbiont Density (cells/cm2) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(sym_dens_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+cat("F) ANOVA results of Max Photosynthesis (Am - μmol/cm2/h) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(Am_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+cat("G) ANOVA results of AQY (μmol/cm2/h) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(AQY_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+
+cat("H) ANOVA results of Respiration (μmol/cm2/h) - Timeseries\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+capture.output(Rd_2ANOVA, file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)
+cat("\n", file = "output/Table_Timeseries_Univariates_ANOVA.txt", append = TRUE)

@@ -1,0 +1,69 @@
+A) ANOVA results of AFDW (mg/cm2) - Timeseries
+               Df Sum Sq Mean Sq F value Pr(>F)
+site            2  1.523  0.7613   1.579  0.233
+timepoint       1  0.300  0.3000   0.622  0.440
+site:timepoint  2  0.134  0.0669   0.139  0.871
+Residuals      18  8.680  0.4822               
+
+B) ANOVA results of Host Protein (ug/cm2) - Timeseries
+               Df Sum Sq Mean Sq F value   Pr(>F)    
+site            2  81494   40747   12.60 0.000378 ***
+timepoint       1 167005  167005   51.66 1.09e-06 ***
+site:timepoint  2   5563    2782    0.86 0.439673    
+Residuals      18  58191    3233                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+C) ANOVA results of Total Chlorophyll per Frag (ug/cm2) - Timeseries
+               Df Sum Sq Mean Sq F value Pr(>F)  
+site            2  8.470   4.235   4.307 0.0296 *
+timepoint       1  8.144   8.144   8.282 0.0100 *
+site:timepoint  2  4.732   2.366   2.406 0.1186  
+Residuals      18 17.699   0.983                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+D) ANOVA results of Total Chlorophyll per Symbiont (ug/cell) - Timeseries
+               Df    Sum Sq   Mean Sq F value  Pr(>F)   
+site            2 1.267e-11 6.333e-12   2.956 0.07759 . 
+timepoint       1 2.513e-11 2.513e-11  11.730 0.00302 **
+site:timepoint  2 2.220e-12 1.109e-12   0.518 0.60453   
+Residuals      18 3.856e-11 2.142e-12                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+E) ANOVA results of Symbiont Density (cells/cm2) - Timeseries
+               Df    Sum Sq   Mean Sq F value   Pr(>F)    
+site            2 1.113e+11 5.563e+10   1.237    0.314    
+timepoint       1 1.342e+12 1.342e+12  29.845 3.45e-05 ***
+site:timepoint  2 9.914e+10 4.957e+10   1.102    0.354    
+Residuals      18 8.096e+11 4.498e+10                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+F) ANOVA results of Max Photosynthesis (Am - µmol/cm2/h) - Timeseries
+               Df Sum Sq Mean Sq F value Pr(>F)  
+site            2 0.7366  0.3683   2.566 0.1046  
+timepoint       1 0.5912  0.5912   4.119 0.0575 .
+site:timepoint  2 0.0302  0.0151   0.105 0.9007  
+Residuals      18 2.5836  0.1435                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+G) ANOVA results of AQY (µmol/cm2/h) - Timeseries
+               Df    Sum Sq   Mean Sq F value Pr(>F)
+site            2 2.730e-07 1.365e-07   0.204  0.817
+timepoint       1 1.887e-06 1.887e-06   2.818  0.110
+site:timepoint  2 4.860e-07 2.428e-07   0.362  0.701
+Residuals      18 1.206e-05 6.697e-07               
+
+H) ANOVA results of Respiration (µmol/cm2/h) - Timeseries
+               Df Sum Sq Mean Sq F value   Pr(>F)    
+site            2 0.1244  0.0622   3.023 0.073785 .  
+timepoint       1 0.3677  0.3677  17.868 0.000507 ***
+site:timepoint  2 0.0007  0.0004   0.017 0.982903    
+Residuals      18 0.3704  0.0206                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
