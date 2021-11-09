@@ -1,12 +1,12 @@
 One way ANOVA and TukeyHSD Posthoc Results of Site and Univariate Metrics at TP0,,,,,,,,,
 ,AFDW (mg/cm2),Host Protein (ug/cm2),Sym Protein (ug/cm2),Symbiont Density (cells/cm2),Total CHL per Frag (ug/cm2),Total CHL per Symbiont (ug/cell),Am,AQY,Rd
 ANOVA (Site),p-value = 0.00133,p-value = 0.0001954,p-value  = 0.02215,p-value = 0.05101,p-value = 4.622e-06,p-value = 0.0003467,p-value = 0.009624 ,p-value = 0.1476,p-value = 0.0003722
-site1-nursery,0.0015647,0.0003669,0.0220847,0.0015647,0.0000034,0.0002409,0.0214922,0.1836151,0.0011818
-site2-nursery,0.0522102,0.0060748,0.2784538,0.0522102,0.0203651,0.3401667,0.0492429,0.3867718,0.0040637
-site2-site1,0.3091609,0.4402697,0.4774444,0.3091609,0.0023189,0.0140271,0.9301011,0.9098575,0.8497979
+site1-nursery,0.0015647,0.0003669,0.0220847,0.0522545,0.0000034,0.0002409,0.0214922,0.1836151,0.0011818
+site2-nursery,0.0522102,0.0060748,0.2784538,0.3596286,0.0203651,0.3401667,0.0492429,0.3867718,0.0040637
+site2-site1,0.3091609,0.4402697,0.4774444,0.6112591,0.0023189,0.0140271,0.9301011,0.9098575,0.8497979
 ,,,,,,,,,
 ,AFDW (mg/cm2),Host Protein (ug/cm2),Sym Protein (ug/cm2),Symbiont Density (cells/cm2),Total CHL per Frag (ug/cm2),Total CHL per Symbiont (ug/cell),Am,AQY,Rd
 ANOVA (Site),p-value = 0.00133,p-value = 0.0001954,p-value  = 0.02215,p-value = 0.05101,p-value = 4.622e-06,p-value = 0.0003467,,p-value = 0.1476,p-value = 0.0003722
-nursery,B,A,B,B,A,B,A,A,A
-site1,AB,B,AB,AB,B,AB,B,A,B
-site2,B,B,B,B,B,B,B,A,B
+nursery,B,A,B,A,A,B,A,A,A
+site1,AB,B,AB,A,B,AB,B,A,B
+site2,B,B,B,A,B,B,B,A,B
