@@ -7,6 +7,9 @@ library(vegan)
 library(ggfortify)
 library(ggplot2)
 library(plotrix)
+library(usethis)
+library(devtools)
+library(permute)
 
 ##### IMPORT DATA ##### 
 
@@ -65,6 +68,9 @@ vegan_data <- scale(pca_data[ ,4:11],center = TRUE, scale = TRUE)
 # PerMANOVA - partitioning the euclidean distance matrix by species
 PRMNOVA <- adonis(vegan_data ~ site*timepoint, data = pca_data, method='eu')
 PRMNOVA
+
+#Pair-wise Posthoc tests to tease apart (??)
+pair.mod <- pairwise.adonis()
 
 ##### PLASTICITY #####
 #generate t0 data for each colony to make statistical comparisons
