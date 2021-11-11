@@ -34,7 +34,7 @@ pca_data<-data[complete.cases(data), ]
 scaled_pca_data<-prcomp(pca_data[c(4:11)], scale=TRUE, center=TRUE) 
 
 #make PCA
-pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="Genotype", loadings=FALSE,  colour="Genotype", loadings.label.colour="black", loadings.colour="black", loadings.label=TRUE, frame=FALSE, loadings.label.size=5, loadings.label.vjust=-1, size=5, frame.type = 'norm') + 
+geno_pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="Genotype", loadings=FALSE,  colour="Genotype", loadings.label.colour="black", loadings.colour="black", loadings.label=TRUE, frame=FALSE, loadings.label.size=5, loadings.label.vjust=-1, size=5, frame.type = 'norm') + 
   theme_classic()+
   theme(legend.text = element_text(size=18), 
         legend.position="right",
@@ -42,17 +42,10 @@ pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="Genoty
         legend.title = element_text(size=18, face="bold"), 
         axis.text = element_text(size=18), 
         axis.title = element_text(size=18,  face="bold"));pca_plot
+ggsave("output/Genotype_PCA.pdf", width = 10, height = 6, units = "in")
 
-pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="site", loadings=FALSE,  colour="site", loadings.label.colour="black", loadings.colour="black", loadings.label=TRUE, frame=FALSE, loadings.label.size=5, loadings.label.vjust=-1, size=5, frame.type = 'norm') + 
-  theme_classic()+
-  theme(legend.text = element_text(size=18), 
-        legend.position="right",
-        plot.background = element_blank(),
-        legend.title = element_text(size=18, face="bold"), 
-        axis.text = element_text(size=18), 
-        axis.title = element_text(size=18,  face="bold"));pca_plot
 
-pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="timepoint", loadings=FALSE,  colour="timepoint", loadings.label.colour="black", loadings.colour="black", loadings.label=TRUE, frame=FALSE, loadings.label.size=5, loadings.label.vjust=-1, size=5, frame.type = 'norm') + 
+site_pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="site", loadings=FALSE,  colour="site", loadings.label.colour="black", loadings.colour="black", loadings.label=TRUE, frame=FALSE, loadings.label.size=5, loadings.label.vjust=-1, size=5, frame.type = 'norm') + 
   theme_classic()+
   theme(legend.text = element_text(size=18), 
         legend.position="right",
@@ -60,6 +53,19 @@ pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="timepo
         legend.title = element_text(size=18, face="bold"), 
         axis.text = element_text(size=18), 
         axis.title = element_text(size=18,  face="bold"));pca_plot
+ggsave("output/Site_PCA.pdf", width = 10, height = 6, units = "in")
+
+
+tp_pca_plot<-ggplot2::autoplot(scaled_pca_data, data=pca_data, frame.colour="timepoint", loadings=FALSE,  colour="timepoint", loadings.label.colour="black", loadings.colour="black", loadings.label=TRUE, frame=FALSE, loadings.label.size=5, loadings.label.vjust=-1, size=5, frame.type = 'norm') + 
+  theme_classic()+
+  theme(legend.text = element_text(size=18), 
+        legend.position="right",
+        plot.background = element_blank(),
+        legend.title = element_text(size=18, face="bold"), 
+        axis.text = element_text(size=18), 
+        axis.title = element_text(size=18,  face="bold"));pca_plot
+ggsave("output/Timepoint_PCA.pdf", width = 10, height = 6, units = "in")
+
 
 #test with PERMANOVA
 # scale data
@@ -190,6 +196,9 @@ summary(plast.mod)
 hist(plast.mod$residuals)
 qqnorm(plast.mod$residuals)
 qqline(plast.mod$residuals)
+
+#Posthoc Tests for Plasticity Score (not really needed since trend is very clear and only tp significant)
+TukeyHSD(plast.mod)
 
 #try kruskal wallis tests for low sample size
 kruskal.test(Distance ~ site, data=Plast.Data)
