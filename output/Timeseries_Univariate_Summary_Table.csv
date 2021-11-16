@@ -1,0 +1,11 @@
+ANOVA VALUES FOR METRICS ,,,,,,,,
+,AFDW (mg/cm2),Host Protein (ug/cm2),Total CHL (ug/cm2),Total CHL  (ug/cell),Sym Dens,Am,AQY,Rd
+site,0.233,0.000378,0.0296,,,,,
+timepoint,0.44,1.09E-06,0.01,,,,,
+site*timepoint,0.871,0.439673,0.1186,,,,,
+,,,,,,,,
+site2-site1,,,,,,,,
+site3-site1,,,,,,,,
+site3-site2,,,,,,,,
+,,,,,,,,
+timepoint4-timepoint1,,,,,,,,
