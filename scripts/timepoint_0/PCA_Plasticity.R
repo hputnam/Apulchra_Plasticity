@@ -75,8 +75,6 @@ vegan_data <- scale(pca_data[ ,4:11],center = TRUE, scale = TRUE)
 PRMNOVA <- adonis(vegan_data ~ site*timepoint, data = pca_data, method='eu')
 PRMNOVA
 
-#Pair-wise Posthoc tests to tease apart (??)
-pair.mod <- pairwise.adonis()
 
 ##### PLASTICITY #####
 #generate t0 data for each colony to make statistical comparisons
