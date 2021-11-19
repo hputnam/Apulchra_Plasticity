@@ -82,249 +82,26 @@ TP0_metadata <- TP0_metadata %>%
   mutate(sym_prot_ug.cm2 = TP0_metadata$holo_prot_ug.cm2 - TP0_metadata$host_prot_ug.cm2) #calculating sym prot
 
 TP0_metadata <- TP0_metadata %>%
-  select(colony_id, site, timepoint, AFDW.mg.cm2, host_prot_ug.cm2, sym_prot_ug.cm2, total_chl.ug.cm2, total_chl.ug.cell, Am, AQY, Rd, cells.cm2) #%>% #selecting the six metrics wanting to output
+  select(colony_id, site, timepoint, AFDW.mg.cm2, host_prot_ug.cm2, total_chl.ug.cm2, total_chl.ug.cell, Am, AQY, Rd, cells.cm2) #%>% #selecting the six metrics wanting to output
 
 TP0_metadata %>% #writing output of metadata for TP0 (all nursery - n=10 and wild sites n=3 per site)
   write.csv("output/TP0_metadata")
 
-#Individually create plots and save them before compiling into one large output plot
-#biomass fig
-
-#Biomass Fig
-AFDW_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = AFDW.mg.cm2, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ylim(0, 3.5) +
-  ylab("mg/cm2") +
-  ggtitle("Ash Free Dry Weight (mg/cm2)") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) + # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-AFDW_TP0
-
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation <- data.frame(
-  x = c(1, 2, 3),
-  y = c(1.75, 3, 2.25),
-  label = c("B", "AB", "B")
-)
-
-#add text to figure
-AFDW_TP0 <- AFDW_TP0 + geom_text(data = annotation, aes (x=x, y=y, label=label),
-                                 color = "black",
-                                 size = 5, fontface= "bold")
-AFDW_TP0
-
-#Host Protein fig
-Host_Prot_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = host_prot_ug.cm2, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Host Protein (ug/cm2)") +
-  ylim(0, 400) +
-  ylab("µg/cm2") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) + # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Host_Prot_TP0  
-
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation1 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(200, 350, 300),
-  label = c("A", "B", "B")
-)
-
-#add text to figure
-Host_Prot_TP0 <- Host_Prot_TP0 + geom_text(data = annotation1, aes (x=x, y=y, label=label),
-                                           color = "black",
-                                           size = 5, fontface= "bold")
-Host_Prot_TP0
-
-
-#Sym Protein fig - NOT USING IN THE END
-#Sym_Prot_TP0 <- TP0_metadata %>%
-#ggplot(aes(x = site, y = sym_prot_ug.cm2, color = site)) +
-#labs(x = "Site", y = "", color = "Site") +
-#ggtitle("Symbiont Protein (ug/cm2)") +
-#theme(plot.title = element_text(hjust = 0.5)) +
-#geom_jitter(width = 0.1) +                                            # Plot all points
-#stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-#geom = "errorbar", color = "black", width = 0.5) +
-#stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-#Sym_Prot_TP0
-
-
-#Total CHL per cm2 fig
-Tot_CHL.cm2_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = total_chl.ug.cm2, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Total Chlorophyll per Fragment (ug/cm2)") +
-  ylim(0, 12) +
-  ylab("µg/cm2") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Tot_CHL.cm2_TP0
-
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation2 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(5, 11, 5),
-  label = c("A", "B", "B")
-)
-
-#add text to figure
-Tot_CHL.cm2_TP0 <- Tot_CHL.cm2_TP0 + geom_text(data = annotation2, aes (x=x, y=y, label=label),
-                                               color = "black",
-                                               size = 5, fontface= "bold")
-Tot_CHL.cm2_TP0
-
-#Total CHL per Symbiont fig
-Tot_CHL.cell_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = total_chl.ug.cell, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ylim(0, 2.5e-05) +
-  ylab("µg/cell") +
-  ggtitle("Total Chlorophyll per Symbiont (ug/cell)") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-Tot_CHL.cell_TP0
-
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation3 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(1.0e-05, 2.0e-05, 1.0e-05),
-  label = c("B", "AB", "B")
-)
-
-#add text to figure
-Tot_CHL.cell_TP0 <- Tot_CHL.cell_TP0 + geom_text(data = annotation3, aes (x=x, y=y, label=label),
-                                                 color = "black",
-                                                 size = 5, fontface= "bold")
-Tot_CHL.cell_TP0
-
-#Sym Density fig
-sym_dens_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = cells.cm2, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  scale_y_continuous(labels = scales::scientific) +
-  ggtitle("Symbiont Density (cells/cm2)") +
-  ylab("cells/cm2") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-
-sym_dens_TP0
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation4 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(7.50e+05, 1.25e+06, 9.00e+05),
-  label = c("B", "AB", "B")
-)
-
-#add text to figure
-sym_dens_TP0 <- sym_dens_TP0 + geom_text(data = annotation4, aes (x=x, y=y, label=label),
-                                         color = "black",
-                                         size = 5, fontface= "bold")
-sym_dens_TP0
-
-#Am (Max Photosynthesis) fig
-Am_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = Am, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Max Photosynthesis (Am)") +
-  ylab("µmol/cm2/h") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-
-Am_TP0
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation5 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(1, 2.1, 2),
-  label = c("A", "B", "B")
-)
-
-#add text to figure
-Am_TP0 <- Am_TP0 + geom_text(data = annotation5, aes (x=x, y=y, label=label),
-                             color = "black",
-                             size = 5, fontface= "bold")
-Am_TP0
-
-#AQY (Max Photosynthetic Rate) fig
-AQY_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = AQY, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ggtitle("alpha (AQY)") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-
-AQY_TP0
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation6 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(0.004, 0.004, 0.004),
-  label = c("A", "A", "A")
-)
-
-#add text to figure
-AQY_TP0 <- AQY_TP0 + geom_text(data = annotation6, aes (x=x, y=y, label=label),
-                               color = "black",
-                               size = 5, fontface= "bold")
-AQY_TP0
-
-
-#Rd (Respiration Rate) Fig
-Rd_TP0 <- TP0_metadata %>%
-  ggplot(aes(x = site, y = Rd, color = site)) +
-  labs(x = "Site", y = "", color = "Site") +
-  ggtitle("Respiration Rate (Rd)") +
-  ylab("µmol/cm2/h") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_jitter(width = 0.1) +                                            # Plot all points
-  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
-               geom = "errorbar", color = "black", width = 0.5) +
-  stat_summary(fun = mean, geom = "point", color = "black")           # Plot mean
-
-Rd_TP0
-
-#adding significance to indicators manually to plot based on TukeyHSD Posthoc
-annotation7 <- data.frame(
-  x = c(1, 2, 3),
-  y = c(0.4, 0.7, 0.6),
-  label = c("A", "B", "B")
-)
-
-#add text to figure
-Rd_TP0 <- Rd_TP0 + geom_text(data = annotation7, aes (x=x, y=y, label=label),
-                             color = "black",
-                             size = 5, fontface= "bold")
-Rd_TP0
-
-
-#Configuring all the saved figures for TP0 into final stage of itself
-TP0Fig <- ggarrange(AFDW_TP0, Host_Prot_TP0, Rd_TP0, sym_dens_TP0, Am_TP0, AQY_TP0,Tot_CHL.cm2_TP0, Tot_CHL.cell_TP0, ncol = 4, nrow = 2)
-
-ggsave("output/TP0_Univariate_Figs.pdf", TP0Fig, width=16, height=12)
-
 #STATS on all
+
+# Tukey test to study each pair of treatment :
+generate_label_df <- function(TUKEY, variable){
+  
+  # Extract labels and factor levels from Tukey post-hoc 
+  Tukey.levels <- TUKEY[[variable]][,4]
+  Tukey.labels <- data.frame(multcompLetters(Tukey.levels)['Letters'])
+  
+  #I need to put the labels in the same order as in the boxplot :
+  Tukey.labels$treatment=rownames(Tukey.labels)
+  Tukey.labels=Tukey.labels[order(Tukey.labels$treatment) , ]
+  return(Tukey.labels)
+}
+
 #Biomass__________________________________________
 model.AFDW <- aov(log10(AFDW.mg.cm2) ~ site, data = TP0_metadata) #save model 
 par(mfrow=c(1,3))
@@ -334,6 +111,9 @@ qqline(model.AFDW$residuals)
 plot(model.AFDW$fitted.values, model.AFDW$residuals)
 biomass_anova<-summary(model.AFDW) #anova for biomass
 biomass_tkyhsd<-TukeyHSD(model.AFDW) #posthoc tests within anova for biomass
+AFDW.HSD.Letters<-generate_label_df(biomass_tkyhsd , "site")#generate Tukey HSD letters using function
+AFDW.HSD.Letters$name <- "AFDW.mg.cm2" 
+AFDW.HSD.Letters$site <- rownames(AFDW.HSD.Letters)
 
 #Host Protein ________________________________
 model.HostProt <- aov(log10(host_prot_ug.cm2) ~ site, data = TP0_metadata) #save model 
@@ -344,6 +124,9 @@ qqline(model.HostProt$residuals)
 plot(model.HostProt$fitted.values, model.HostProt$residuals)
 host_prot_anova<-anova(model.HostProt) #anova for biomass
 host_prot_tkyhsd<-TukeyHSD(model.HostProt) #posthoc tests within anova for biomass
+host_prot.HSD.Letters<-generate_label_df(host_prot_tkyhsd , "site")#generate Tukey HSD letters using function
+host_prot.HSD.Letters$name <- "host_prot_ug.cm2"
+host_prot.HSD.Letters$site <- rownames(host_prot.HSD.Letters)
 
 #Sym Density______________________________________
 model.CellDens <- aov(log10(cells.cm2) ~ site, data = TP0_metadata) #save model 
@@ -354,7 +137,9 @@ qqline(model.CellDens$residuals)
 plot(model.CellDens$fitted.values, model.CellDens$residuals)
 sym_dens_anova<-anova(model.CellDens) #anova for Sym Density
 sym_dens_tkyhsd<-TukeyHSD(model.CellDens) #posthoc tests within anova for Sym Density
-
+sym_dens.HSD.Letters<-generate_label_df(sym_dens_tkyhsd , "site")#generate Tukey HSD letters using function
+sym_dens.HSD.Letters$name <- "cells.cm2"
+sym_dens.HSD.Letters$site <- rownames(sym_dens.HSD.Letters)
 
 #Total Chlorophyll per Frag (ug/cm2)_______________
 model.Chlcm <- aov(log10(total_chl.ug.cm2) ~ site, data = TP0_metadata) #save model 
@@ -365,7 +150,9 @@ qqline(model.Chlcm$residuals)
 plot(model.Chlcm$fitted.values, model.Chlcm$residuals)
 tot_chl_anova<-anova(model.Chlcm) #anova for Total Chl
 tot_chl_tkyhsd<-TukeyHSD(model.Chlcm) #posthoc tests within anova for Total Chl
-
+tot_chl.HSD.Letters<-generate_label_df(tot_chl_tkyhsd , "site")#generate Tukey HSD letters using function
+tot_chl.HSD.Letters$name <- "total_chl.ug.cm2" 
+tot_chl.HSD.Letters$site <- rownames(tot_chl.HSD.Letters)
 
 #Total Chlorophyll per cell (ug/cells)____________
 model.Chl.cell <- aov(log10(total_chl.ug.cell) ~ site, data = TP0_metadata) #save model 
@@ -376,6 +163,9 @@ qqline(model.Chl.cell$residuals)
 plot(model.Chl.cell$fitted.values, model.Chl.cell$residuals)
 tot_chl_per.cell_anova<-anova(model.Chl.cell) #anova for Total Chl per cell
 tot_chl_per.cell_tkyhsd<-TukeyHSD(model.Chl.cell) #posthoc tests within anova for Total Chl per cell
+tot_chl_per.cell.HSD.Letters<-generate_label_df(tot_chl_per.cell_tkyhsd , "site")#generate Tukey HSD letters using function
+tot_chl_per.cell.HSD.Letters$name <- "total_chl.ug.cell" 
+tot_chl_per.cell.HSD.Letters$site <- rownames(tot_chl_per.cell.HSD.Letters)
 
 #Am (Max Photosynthesis)____________
 model.Am <- aov(log10(Am) ~ site, data = TP0_metadata) #save model 
@@ -386,6 +176,9 @@ qqline(model.Am$residuals)
 plot(model.Am$fitted.values, model.Chl.cell$residuals)
 Am_anova<-anova(model.Am) #anova for Am
 Am_tkyhsd<-TukeyHSD(model.Am) #posthoc tests within anova for Am
+Am.HSD.Letters<-generate_label_df(Am_tkyhsd , "site")#generate Tukey HSD letters using function
+Am.HSD.Letters$name <-"Am" 
+Am.HSD.Letters$site <- rownames(Am.HSD.Letters)
 
 #AQY (Max Photosynthetic Rate)____________
 model.AQY <- aov(log10(AQY) ~ site, data = TP0_metadata) #save model 
@@ -396,6 +189,9 @@ qqline(model.AQY$residuals)
 plot(model.AQY$fitted.values, model.Chl.cell$residuals)
 AQY_anova<-anova(model.AQY) #anova for AQY
 AQY_tkyhsd<-TukeyHSD(model.AQY) #posthoc tests within anova for AQY
+AQY.HSD.Letters<-generate_label_df(AQY_tkyhsd , "site")#generate Tukey HSD letters using function
+AQY.HSD.Letters$name <- "AQY" 
+AQY.HSD.Letters$site <- rownames(AQY.HSD.Letters)
 
 #Rd (Respiration Rate)____________
 model.Rd <- aov(log10(Rd) ~ site, data = TP0_metadata) #save model
@@ -406,6 +202,50 @@ qqline(model.Rd$residuals)
 plot(model.Rd$fitted.values, model.Chl.cell$residuals)
 Rd_anova<-anova(model.Rd) #anova for Rd
 Rd_tkyhsd<-TukeyHSD(model.Rd) #posthoc tests within anova for Rd
+Rd.HSD.Letters<-generate_label_df(Rd_tkyhsd , "site")#generate Tukey HSD letters using function
+Rd.HSD.Letters$name <- "Rd"
+Rd.HSD.Letters$site <- rownames(Rd.HSD.Letters)
+
+
+Letters <- rbind(AFDW.HSD.Letters,host_prot.HSD.Letters,sym_dens.HSD.Letters,tot_chl.HSD.Letters,
+                 tot_chl_per.cell.HSD.Letters,Am.HSD.Letters, AQY.HSD.Letters,Rd.HSD.Letters)
+
+
+Letters$group <- paste0(Letters$site, Letters$name)
+
+
+
+TP0_metadata_long <- pivot_longer(TP0_metadata, cols=AFDW.mg.cm2:cells.cm2)
+TP0_metadata_long$group <- paste0(TP0_metadata_long$site, TP0_metadata_long$name)
+
+yvalue<- TP0_metadata_long %>% group_by(name,site) %>%
+  summarise(mean = mean(value))# obtain letter position for y axis using means
+yvalue$group <-paste0(yvalue$site,yvalue$name)
+
+  
+final<-left_join(yvalue,Letters, by="group", keep=F) #merge dataframes
+final<-left_join(final,TP0_metadata_long, by="group") #merge dataframes
+
+unique(final$name)
+
+labs <- as_labeller(c("AFDW.mg.cm2", "Am","AQY","cells.cm2","host_prot_ug.cm2","Rd","total_chl.ug.cell","total_chl.ug.cm2") )
+
+TP0Fig <- final %>%
+  ggplot(aes(x = site.x, y = value)) +
+  geom_blank() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  facet_wrap(vars(name), scales = "free_y", nrow = 2,ncol = 4)+
+  geom_jitter(width = 0.1, size=0.5) + # Plot all points
+  theme(plot.title = element_text(hjust = 0.5, face='bold'))+
+  stat_summary(fun.data = mean_cl_normal, fun.args = list(mult = 1),    # Plot standard error
+               geom = "errorbar", color = "black", width = 0.1) +
+  stat_summary(fun = mean, geom = "point", color = "black") +           # Plot mean
+  geom_text(aes(x = site, y = mean, label = Letters),vjust=0,hjust=-1.5) +
+  theme(plot.title = element_text(vjust=-0.6))
+
+ggsave("output/TP0_Univariate_Figs.jpg", TP0Fig, width=12, height=8)
+
 
 
 #ANOVA on all variables and TukeyHSD Posthoc tests
